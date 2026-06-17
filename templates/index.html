@@ -1683,5 +1683,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+<style>
+/* โค้ดเคลียร์ปัญหาหน้าจอมือถือโดนเบียดกระแซะ */
+@media (max-width: 991.98px) {
+    /* เปลี่ยนจากโครงสร้าง d-flex เรียงซ้ายขวา ให้สลับมาตั้งดิ่งบนล่าง */
+    .d-flex, [class*="d-flex"], body > div {
+        flex-direction: column !important;
+        display: flex !important;
+    }
+    
+    /* สั่งให้เมนูบาร์และแดชบอร์ดหลักกางความกว้างเต็ม 100% ไม่เบียดกัน */
+    .border-end.bg-white, [class*="sidebar"], .main-content, .card, [class*="col-"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+
+    /* ปลดล็อกให้ข้อความชื่อเรื่องอัปโหลดและตัวหนังสือต่าง ๆ ตัดคำแนวนอนอ่านง่าย */
+    h5, p, span, .container-fluid {
+        white-space: normal !important;
+        word-break: break-word !important;
+        width: 100% !important;
+    }
+}
+</style>
 </body>
 </html>
