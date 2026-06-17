@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IEP Plus - Integrated Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-purple: #6366f1;
+            --light-purple: #f3f4ff;
+            --text-navy: #172554;
+            --bg-main: #f8fafc;
+            --success-green: #10b981;
+            --warning-orange: #f97316;
+            --navy-blue: #1e293b;
+            --header-blue: #0d2e5c;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--navy-blue);
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #fcfbfe;
+            border-right: 1px solid #e2e8f0;
+            padding: 24px 16px;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            padding-left: 10px;
+        }
+        .sidebar-menu-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #94a3b8;
+            font-weight: 700;
+            margin-top: 18px;
+            margin-bottom: 8px;
+            padding-left: 12px;
+        }
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            color: #64748b;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+            cursor: pointer;
+        }
+        .sidebar-item:hover {
+            background-color: #f1f5f9;
+            color: var(--text-navy);
+        }
+        .sidebar-item.active {
+            background-color: #ede9fe;
+            color: #6d28d9;
+            font-weight: 600;
+        }
+
+        /* Main Content wrapper */
+        .main-content {
+            margin-left: 260px;
+            padding: 24px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* Header topbar */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            background-color: #fff;
+            padding: 16px 24px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        /* General Custom Cards */
+        .custom-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* การจัดการสลับหน้าเพจ */
+        .menu-page { 
+            display: none; 
+        }
+        .menu-page.active-page { 
+            display: block !important; 
+        }
+
+        /* ========================================== */
+        /* STYLES เดิมสำหรับ Supervision Reflection (ห้ามเปลี่ยน) */
+        /* ========================================== */
+        .form-section-title {
+            background-color: var(--header-blue);
+            color: white;
+            padding: 6px 14px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            font-family: 'Prompt', sans-serif;
+        }
+        .input-dotted {
+            border: none;
+            border-bottom: 1px dotted #94a3b8;
+            border-radius: 0;
+            background: transparent;
+            padding: 2px 4px;
+            box-shadow: none !important;
+            font-size: 13px;
+        }
+        .input-dotted:focus { border-bottom: 1px solid #0284c7; outline: none; }
+        
+        .model-component-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background-color: #f8fafc;
+        }
+        .model-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            flex-shrink: 0;
+            font-family: 'Prompt', sans-serif;
+            text-shadow: 0px 1px 2px rgba(0,0,0,0.15);
+        }
+
+        /* สีประจำตัวอักษรโมเดล IN-CARE Plus อ้างอิงสไตล์การดีไซน์ */
+        .bg-icon-i { background-color: #3b82f6; } /* Blue */
+        .bg-icon-n { background-color: #06b6d4; } /* Cyan */
+        .bg-icon-c { background-color: #10b981; } /* Green */
+        .bg-icon-a { background-color: #f59e0b; } /* Amber */
+        .bg-icon-r { background-color: #ec4899; } /* Pink */
+        .bg-icon-e { background-color: #8b5cf6; } /* Purple */
+        .bg-icon-p { background-color: #64748b; } /* Slate/Gray */
+
+        .main-sup-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 15px; }
+        .main-sup-table th, .main-sup-table td { border: 1px solid #b8c4d9; padding: 8px; vertical-align: middle; }
+        .main-sup-table th { background-color: #f1f5f9; text-align: center; color: var(--header-blue); font-weight: bold; }
+        .main-sup-table td.center-radio { text-align: center; width: 55px; }
+        .main-sup-table td.center-radio input[type="radio"] { transform: scale(1.2); cursor: pointer; }
+
+        .guide-paper-box {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 12px;
+            background-color: #fff;
+            margin-bottom: 14px;
+            font-size: 12px;
+        }
+        .guide-paper-title {
+            font-weight: bold;
+            color: var(--header-blue);
+            border-bottom: 2px solid var(--header-blue);
+            padding-bottom: 4px;
+            margin-bottom: 8px;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        /* ========================================== */
+        /* STYLES ใหม่สำหรับ Dashboard AI-Assisted */
+        /* ========================================== */
+        .analysis-score-circle {
+            width: 110px;
+            height: 110px;
+            border: 8px solid #10b981;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        .ai-badge-success { background-color: #e6f4ea; color: #137333; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .ai-badge-warning { background-color: #fef7e0; color: #b06000; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        
+        .score-box-mini {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            background: #fff;
+        }
+        .score-progress-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 5px solid #6366f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 8px auto;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .ai-tip-card {
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+        .ai-chart-placeholder {
+            height: 180px;
+            background: linear-gradient(180deg, #f3f4ff 0%, #ffffff 100%);
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+        }
+        .chart-line-mock {
+            width: 100%;
+            height: 4px;
+            background-color: #6366f1;
+            position: absolute;
+            bottom: 60px;
+            left: 0;
+        }
+        .chart-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #6366f1;
+            border: 2px solid white;
+            border-radius: 50%;
+            position: absolute;
+            z-index: 2;
+        }
+        
+        .profile-img-upload {
+            position: relative;
+            cursor: pointer;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <input type="file" id="profile-upload-input" accept="image/*" class="d-none">
+
+    <!-- ========================================== -->
+    <!-- แถบเมนูด้านซ้าย (Sidebar) -->
+    <!-- ========================================== -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <img src="static/area-logo.png" alt="Logo" style="width: 40px; height: 40px; object-fit: contain;" onerror="this.src='https://placehold.co/40'">
+            <div>
+                <h6 class="fw-bold m-0 text-primary" style="font-family: 'Prompt', sans-serif;">IEP Plus</h6>
+                <small class="text-muted" style="font-size: 10px;">IN-CARE Plus Model</small>
+            </div>
+        </div>
+
+        <div id="btn-home" class="sidebar-item" onclick="switchMainTab('page-home', 'btn-home', 'fa-house', 'หน้าแรก', 'ระบบสนับสนุนการนิเทศบริหารจัดการภาพรวม')"><i class="fa-solid fa-house"></i> หน้าแรก</div>
+        <div class="sidebar-menu-title">ระบบสนับสนุนการนิเทศ 5 ระบบ</div>
+        <div id="btn-iep-tracking" class="sidebar-item" onclick="switchMainTab('page-iep-tracking', 'btn-iep-tracking', 'fa-location-crosshairs', 'IEP Online Tracking', 'ระบบติดตามสถานะการส่งและตรวจสอบความก้าวหน้าการจัดทำแผนพัฒนาการจัดการศึกษาเฉพาะบุคคล')"><i class="fa-solid fa-location-crosshairs"></i> IEP Online Tracking</div>
+        <div id="btn-coaching" class="sidebar-item" onclick="switchMainTab('page-coaching', 'btn-coaching', 'fa-comments', 'Coaching Online', 'กระดานสนทนาและช่องทางติดต่อสื่อสาร ให้คำปรึกษาระหว่างศึกษานิเทศก์กับครูผู้สอน')"><i class="fa-solid fa-comments"></i> Coaching Online</div>
+        <div id="btn-reflection" class="sidebar-item" onclick="switchMainTab('page-reflection', 'btn-reflection', 'fa-clipboard-check', 'Supervision Reflection', 'เครื่องมือนิเทศการศึกษาเชิงระบบโดยใช้นวัตกรรม IN-CARE Plus')"><i class="fa-solid fa-clipboard-check"></i> Supervision Reflection</div>
+        <div id="btn-ai-analysis" class="sidebar-item active" onclick="switchMainTab('page-ai-analysis', 'btn-ai-analysis', 'fa-wand-magic-sparkles', 'AI-Assisted IEP Analysis', 'วิเคราะห์คุณภาพแผน IEP ด้วย AI')"><i class="fa-solid fa-wand-magic-sparkles"></i> AI-Assisted IEP Analysis</div>
+        <div id="btn-dashboard" class="sidebar-item" onclick="switchMainTab('page-dashboard', 'btn-dashboard', 'fa-chart-line', 'School Dashboard', 'รายงานข้อมูลสถิติเชิงลึกและภาพรวมผลสัมฤทธิ์ของโรงเรียนในเขตพื้นที่การศึกษา')"><i class="fa-solid fa-chart-line"></i> School Dashboard</div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- พื้นที่เนื้อหาหลัก (Main Content) -->
+    <!-- ========================================== -->
+    <div class="main-content">
+        
+        <!-- แถบด้านบนสุด (Topbar) -->
+        <div class="topbar">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-light p-2 rounded-circle text-primary">
+                    <i id="topbar-icon" class="fa-solid fa-wand-magic-sparkles fs-4 text-primary"></i>
+                </div>
+                <div>
+                    <h4 id="topbar-title" class="fw-bold m-0" style="font-size: 19px; font-family: 'Prompt', sans-serif;">AI-Assisted IEP Analysis</h4>
+                    <p id="topbar-subtitle" class="text-muted m-0" style="font-size: 12px;">วิเคราะห์คุณภาพแผน IEP ด้วย AI</p>
+                </div>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2 bg-white p-1 pe-3 rounded-pill shadow-sm">
+                    <div class="profile-img-upload" onclick="document.getElementById('profile-upload-input').click()">
+                        <img id="topbar-profile-img" src="/static/ramida.JPG" style="width: 35px; height: 35px; object-fit: cover; border-radius: 50%;">
+                    </div>
+                    <div style="line-height: 1.1;">
+                        <small class="fw-bold d-block" style="font-size: 12px; font-family: 'Prompt', sans-serif;">นางรมิดา ประเสริฐ</small>
+                        <small class="text-muted" style="font-size: 10px;">ศึกษานิเทศก์ สพม.หนองคาย</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- หน้าต่างๆ ของระบบเมนู -->
+        <div id="page-home" class="menu-page">
+            <div class="custom-card">
+                <h5><i class="fa-solid fa-house text-primary me-2"></i>หน้าแรก</h5>
+                <p class="text-muted small mt-2">ยินดีต้อนรับเข้าสู่ระบบสารสนเทศรวม IEP Plus สำหรับผู้บริหารและศึกษานิเทศก์</p>
+            </div>
+        </div>
+
+        <div id="page-iep-tracking" class="menu-page">
+    <style>
+        /* จัดแต่งหน้าตาให้สวยเนียนถอดแบบจากดีไซน์เป๊ะๆ */
+        .stat-box-v3 {
+            background: #ffffff !important; border: 1px solid #f1f5f9 !important; border-radius: 16px !important; padding: 24px !important; box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important; position: relative; overflow: hidden;
+        }
+        .stat-v3-title { font-size: 14px !important; font-weight: 700 !important; margin-bottom: 12px !important; }
+        .stat-v3-value { font-size: 34px !important; font-weight: 800 !important; color: #1e293b !important; line-height: 1 !important; margin-bottom: 4px !important; }
+        .chart-card-v2 { background: #ffffff !important; border: 1px solid #f1f5f9 !important; border-radius: 20px !important; padding: 24px !important; height: 100% !important; box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important; }
+        .table-v2 th { background-color: #f8fafc !important; color: #475569 !important; font-size: 12px !important; font-weight: 700 !important; padding: 16px 12px !important; border-bottom: 1px solid #e2e8f0 !important; text-align: center; }
+        .table-v2 td { font-size: 13px !important; padding: 16px 12px !important; vertical-align: middle !important; border-bottom: 1px solid #f1f5f9 !important; }
+        .badge-v2 { padding: 6px 14px !important; border-radius: 30px !important; font-size: 11px !important; font-weight: 700 !important; display: inline-block !important; }
+        .bg-success-v2 { background-color: #e6f4ea !important; color: #137333 !important; }
+        .bg-warning-v2 { background-color: #fef3c7 !important; color: #d97706 !important; }
+        .bg-danger-v2 { background-color: #fee2e2 !important; color: #dc2626 !important; }
+        .right-panel-v2 { background: #ffffff !important; border: 1px solid #f1f5f9 !important; border-radius: 16px !important; padding: 24px !important; margin-bottom: 24px !important; box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important; }
+        .sub-tab-btn { border: none !important; background: transparent !important; padding: 10px 20px !important; font-size: 13px !important; font-weight: 600 !important; color: #64748b !important; border-radius: 12px !important; transition: all 0.2s; }
+        .sub-tab-btn.active { background-color: #6366f1 !important; color: #ffffff !important; }
+        .progress-mini { height: 7px !important; background-color: #f1f5f9 !important; border-radius: 10px !important; width: 90px !important; overflow: hidden; display: inline-block; margin-bottom: 0; }
+        .report-item-v2 { display: flex; align-items: center; justify-content: space-between; padding: 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 12px; }
+    </style>
+
+    <!-- หัวข้อแดชบอร์ดด้านบนสุด -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <div class="p-3 rounded-circle text-primary" style="background: #eff6ff; width: 54px; height: 54px; display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-crosshairs fs-4"></i>
+            </div>
+            <div>
+                <h4 class="fw-bold mb-1" style="color: #1e293b; font-size: 22px;">IEP Online Tracking</h4>
+                <p class="text-muted mb-0" style="font-size: 13px;">ติดตามความก้าวหน้า วิเคราะห์ข้อมูล และรายงานผลการดำเนินงาน IEP แบบเรียลไทม์</p>
+            </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <select class="form-select border-0 shadow-sm px-3 fw-semibold" style="border-radius: 10px; font-size: 13px; height: 40px; background-color: #ffffff;"><option>📍 โรงเรียนบ้านหนองคายวิทยา</option></select>
+        </div>
+    </div>
+
+    <!-- [ส่วนที่ 1]: การ์ดสรุปจำนวน 5 กล่องด้านบนสุด -->
+    <div class="row g-3 mb-4">
+        <div class="col"><div class="stat-box-v3"><div class="stat-v3-title text-primary">นักเรียนทั้งหมด</div><div class="stat-v3-value">309 <span style="font-size:14px; font-weight:500; color:#64748b;">คน</span></div><small class="text-muted fw-semibold" style="font-size:11px;">ชาย 178 คน | หญิง 131 คน</small></div></div>
+        <div class="col"><div class="stat-box-v3"><div class="stat-v3-title text-success">แผน IEP ทั้งหมด</div><div class="stat-v3-value">309 <span style="font-size:14px; font-weight:500; color:#64748b;">แผน</span></div><small class="text-success fw-bold" style="font-size:11px;">100% ของนักเรียนทั้งหมด</small></div></div>
+        <div class="col"><div class="stat-box-v3"><div class="stat-v3-title text-warning">ดำเนินการแล้ว</div><div class="stat-v3-value">278 <span style="font-size:14px; font-weight:500; color:#64748b;">แผน</span></div><small class="text-muted fw-semibold" style="font-size:11px;">คิดเป็น 90.0%</small></div></div>
+        <div class="col"><div class="stat-box-v3"><div class="stat-v3-title" style="color:#8b5cf6;">อยู่ระหว่างดำเนินการ</div><div class="stat-v3-value">25 <span style="font-size:14px; font-weight:500; color:#64748b;">แผน</span></div><small class="text-muted fw-semibold" style="font-size:11px;">คิดเป็น 8.1%</small></div></div>
+        <div class="col"><div class="stat-box-v3"><div class="stat-v3-title text-danger">ยังไม่ดำเนินการ</div><div class="stat-v3-value">6 <span style="font-size:14px; font-weight:500; color:#64748b;">แผน</span></div><small class="text-muted fw-semibold" style="font-size:11px;">คิดเป็น 1.9%</small></div></div>
+    </div>
+
+    <!-- [ส่วนที่ 2]: บล็อกกราฟสถิติและความก้าวหน้า -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-9 col-lg-8">
+            <div class="row g-3 mb-4">
+                <!-- กราฟเส้นความก้าวหน้ารายเดือน -->
+                <div class="col-md-7">
+                    <div class="chart-card-v2">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h6 class="fw-bold mb-0" style="font-size:14px; color:#1e293b;">ความก้าวหน้าการดำเนินงาน IEP โดยรวม</h6>
+                            <select class="form-select form-select-sm w-auto fw-semibold" style="font-size:11px; border-radius:6px;"><option>ปีการศึกษา 2566</option></select>
+                        </div>
+                        <div style="height:160px; background:linear-gradient(180deg, #f5f3ff 0%, #ffffff 100%); border-radius:14px; position:relative; padding:25px 15px 5px 15px;">
+                            <svg viewBox="0 0 500 100" class="w-100 h-100" preserveAspectRatio="none">
+                                <path d="M 30,75 L 140,60 L 250,45 L 360,35 L 470,15" fill="none" stroke="#6366f1" stroke-width="4" stroke-linecap="round"></path>
+                                <circle cx="30" cy="75" r="5" fill="#6366f1"></circle>
+                                <circle cx="140" cy="60" r="5" fill="#6366f1"></circle>
+                                <circle cx="250" cy="45" r="5" fill="#6366f1"></circle>
+                                <circle cx="360" cy="35" r="5" fill="#6366f1"></circle>
+                                <circle cx="470" cy="15" r="5" fill="#4f46e5"></circle>
+                            </svg>
+                            <div class="d-flex justify-content-between mt-3 text-muted fw-semibold" style="font-size:11px;"><span>ม.ค. 67</span><span>ก.พ. 67</span><span>มี.ค. 67</span><span>เม.ย. 67</span><span>พ.ค. 67</span></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- กราฟวงกลมแสดงสัดส่วน -->
+                <div class="col-md-5">
+                    <div class="chart-card-v2">
+                        <h6 class="fw-bold mb-4" style="font-size:14px; color:#1e293b;">สถานะการดำเนินงาน IEP</h6>
+                        <div class="d-flex align-items-center justify-content-around h-100 pb-3">
+                            <div class="position-relative" style="width:120px; height:120px; background:conic-gradient(#10b981 0% 90.0%, #f59e0b 90.0% 98.1%, #ef4444 98.1% 100%); border-radius:50%;">
+                                <div class="position-absolute bg-white rounded-circle d-flex flex-column align-items-center justify-content-center" style="width:86px; height:86px; top:17px; left:17px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                                    <span style="font-size:10px; color:#64748b; font-weight:700;">รวม</span>
+                                    <span style="font-size:24px; font-weight:800; color:#1e293b; line-height:1;">309</span>
+                                </div>
+                            </div>
+                            <div class="small fw-semibold" style="font-size:11.5px; line-height:2; color:#475569;">
+                                <div><i class="fa-solid fa-circle text-success me-1.5"></i> ดำเนินการแล้ว (278)</div>
+                                <div><i class="fa-solid fa-circle text-warning me-1.5"></i> อยู่ระหว่างทำ (25)</div>
+                                <div><i class="fa-solid fa-circle text-danger me-1.5"></i> ยังไม่เริ่มทำ (6)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [ส่วนที่ 3]: ตารางข้อมูลรายชื่อนักเรียน -->
+            <div class="right-panel-v2">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                    <div class="d-flex gap-1">
+                        <button class="sub-tab-btn active">รายการนักเรียน</button>
+                        <button class="sub-tab-btn">ความก้าวหน้ารายบุคคล</button>
+                        <button class="sub-tab-btn">สรุปห้องเรียน</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-v2 mb-0">
+                        <thead>
+                            <tr><th style="width:60px;">ลำดับ</th><th>ชื่อ - สกุลนักเรียน</th><th style="width:100px; text-align:center;">ระดับชั้น</th><th>ประเภทความต้องการ</th><th style="width:160px;">ความก้าวหน้า IEP</th><th style="width:140px; text-align:center;">สถานะ</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="text-center">1</td><td><div class="fw-bold text-dark">เด็กชายธนวัฒน์ ใจดี</div><small class="text-muted">12345</small></td><td class="text-center fw-bold">ม.2/1</td><td>บกพร่องทางการเรียนรู้</td><td><div class="d-flex align-items-center gap-2"><div class="progress progress-mini"><div class="progress-bar bg-success" style="width: 95%;"></div></div><small class="fw-bold text-success">95%</small></div></td><td class="text-center"><span class="badge-v2 bg-success-v2">ดำเนินการแล้ว</span></td></tr>
+                            <tr><td class="text-center">2</td><td><div class="fw-bold text-dark">เด็กหญิงกมลวรรณ สีหะ</div><small class="text-muted">12346</small></td><td class="text-center fw-bold">ม.2/1</td><td>บกพร่องทางสติปัญญา</td><td><div class="d-flex align-items-center gap-2"><div class="progress progress-mini"><div class="progress-bar bg-warning" style="width: 78%;"></div></div><small class="fw-bold text-warning">78%</small></div></td><td class="text-center"><span class="badge-v2 bg-warning-v2">อยู่ระหว่างดำเนินการ</span></td></tr>
+                            <tr><td class="text-center">3</td><td><div class="fw-bold text-dark">เด็กชายปัณณวัฒน์ คำภา</div><small class="text-muted">12347</small></td><td class="text-center fw-bold">ม.2/2</td><td>สมาธิสั้น (ADHD)</td><td><div class="d-flex align-items-center gap-2"><div class="progress progress-mini"><div class="progress-bar bg-warning" style="width: 62%;"></div></div><small class="fw-bold text-warning">62%</small></div></td><td class="text-center"><span class="badge-v2 bg-warning-v2">อยู่ระหว่างดำเนินการ</span></td></tr>
+                            <tr><td class="text-center">4</td><td><div class="fw-bold text-dark">เด็กหญิงสุภัสสรา ราชเดช</div><small class="text-muted">12348</small></td><td class="text-center fw-bold">ม.2/2</td><td>บกพร่องทางการเรียนรู้</td><td><div class="d-flex align-items-center gap-2"><div class="progress progress-mini"><div class="progress-bar bg-danger" style="width: 0%;"></div></div><small class="fw-bold text-danger">0%</small></div></td><td class="text-center"><span class="badge-v2 bg-danger-v2">ยังไม่ดำเนินการ</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- [ส่วนที่ 4]: บล็อกตัวกรองและเมนูฝั่งขวา -->
+        <div class="col-xl-3 col-lg-4">
+            <div class="right-panel-v2">
+                <h6 class="fw-bold mb-3" style="font-size:14px; color:#1e293b;"><i class="fa-solid fa-filter me-2 text-primary"></i> ค้นหาและกรองข้อมูล</h6>
+                <div class="mb-2"><label class="small text-muted fw-semibold mb-1">ระดับชั้น</label><select class="form-select form-select-sm"><option>ทั้งหมด</option></select></div>
+                <div class="mb-3"><label class="small text-muted fw-semibold mb-1">สถานะแผน</label><select class="form-select form-select-sm"><option>ทั้งหมด</option></select></div>
+                <button class="btn btn-primary btn-sm w-100 fw-bold" style="background:#6366f1; border:none; height:36px; border-radius:8px;">ค้นหาข้อมูล</button>
+            </div>
+            
+            <div class="right-panel-v2">
+                <h6 class="fw-bold mb-3" style="font-size:14px; color:#1e293b;"><i class="fa-solid fa-bell me-2 text-warning"></i> การแจ้งเตือน</h6>
+                <div class="d-flex justify-content-between mb-2 small fw-semibold"><span>IEP ใกล้ครบกำหนด (7 วัน)</span><b class="text-danger">8 แผน</b></div>
+                <div class="d-flex justify-content-between mb-2 small fw-semibold"><span>ยังไม่ได้บันทึกความก้าวหน้า</span><b class="text-danger">12 แผน</b></div>
+                <div class="d-flex justify-content-between small fw-semibold"><span>แผน IEP ที่ต้องปรับปรุง</span><b class="text-warning">7 แผน</b></div>
+            </div>
+
+            <div class="right-panel-v2" style="background:#f8fafc !important; border:1px dashed #cbd5e1 !important;">
+                <h6 class="fw-bold mb-3" style="font-size:14px; color:#1e293b;"><i class="fa-solid fa-file-pdf me-2 text-success"></i> ดาวน์โหลดรายงาน</h6>
+                <div class="report-item-v2"><div><span class="fw-bold small d-block">รายงานความก้าวหน้ารายบุคคล</span></div><i class="fa-solid fa-download text-muted"></i></div>
+                <div class="report-item-v2"><div><span class="fw-bold small d-block">รายงานสรุปตามห้องเรียน</span></div><i class="fa-solid fa-download text-muted"></i></div>
+            </div>
+        </div>
+    </div>
+</div>
+        <div id="page-coaching" class="menu-page">
+    <style>
+        /* CSS ปรับแต่งพิเศษสำหรับหน้า Coaching Dashboard ของ ศน. รมิดา */
+        .coaching-banner-v4 {
+            background: linear-gradient(135deg, #bbf7d0 0%, #f0fdf4 100%) !important;
+            border-radius: 16px !important;
+            padding: 28px !important;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #bbf7d0 !important;
+        }
+        .banner-img-group {
+            position: relative;
+            width: 180px;
+            height: 110px;
+        }
+        .banner-avatar {
+            position: absolute;
+            border-radius: 12px;
+            border: 3px solid #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            object-fit: cover;
+        }
+        .action-card-v4 {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 16px !important;
+            padding: 16px !important;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+        }
+        .action-card-v4:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05) !important;
+        }
+        .coach-card-v4 {
+            background: #ffffff !important;
+            border: 1px solid #f1f5f9 !important;
+            border-radius: 16px !important;
+            padding: 20px 16px !important;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.01) !important;
+        }
+        .coach-avatar-v4 {
+            width: 85px;
+            height: 85px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 12px;
+        }
+        .btn-schedule-v4 {
+            background-color: #22c55e !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 20px !important;
+            padding: 6px 18px !important;
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        .btn-schedule-v4:hover { background-color: #16a34a !important; }
+        .table-coaching-v4 th {
+            background-color: #f8fafc !important;
+            color: #475569 !important;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            padding: 12px !important;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+        .table-coaching-v4 td {
+            font-size: 12.5px !important;
+            padding: 14px 12px !important;
+            vertical-align: middle !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+        }
+        .right-box-v4 {
+            background: #ffffff !important;
+            border: 1px solid #f1f5f9 !important;
+            border-radius: 16px !important;
+            padding: 20px !important;
+            margin-bottom: 20px !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+        }
+        .cal-grid-v4 {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            text-align: center;
+            font-size: 11.5px;
+        }
+        .cal-day-v4 { padding: 4px 0; font-weight: 600; color: #64748b; }
+        .cal-num-v4 { padding: 4px 0; font-weight: 500; color: #1e293b; position: relative; }
+        .cal-num-v4.has-dot::after {
+            content: '';
+            position: absolute;
+            bottom: 1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background-color: #3b82f6;
+            border-radius: 50%;
+        }
+        .cal-num-v4.active {
+            background-color: #22c55e;
+            color: white !important;
+            border-radius: 50%;
+            font-weight: 700;
+        }
+        .tool-card-v4 {
+            background: #ffffff; border: 1px solid #f1f5f9; border-radius: 12px; padding: 14px; text-align: center; flex: 1;
+        }
+    </style>
+
+    <!-- ส่วนหัวข้อของหน้าเมนู -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <div class="p-3 rounded-circle text-success" style="background: #e6f4ea; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-chalkboard-user fs-4 text-success"></i>
+            </div>
+            <div>
+                <h4 class="fw-bold mb-0" style="color: #1e293b; font-size: 22px;">Coaching Online</h4>
+                <p class="text-muted mb-0" style="font-size: 13px;">ให้คำปรึกษาและโค้ชครู เพื่อพัฒนาการจัดการเรียนรู้และการดูแลช่วยเหลือนักเรียน</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- ฝั่งซ้าย: ข้อมูลหลักและรายชื่อคุณครูที่รอการ Coaching -->
+        <div class="col-xl-9 col-lg-8">
+            
+            <!-- แบนเนอร์ต้อนรับท่าน ศน. รมิดา -->
+            <div class="coaching-banner-v4 mb-4 d-flex justify-content-between align-items-center">
+                <div style="max-width: 65%;">
+                    <h4 class="fw-bold text-dark mb-2" style="font-size: 20px;">ยินดีต้อนรับ คุณครู [ชื่อ-นามสกุล ของท่าน]</h4>
+                    <p class="text-secondary mb-0" style="font-size: 13.5px; line-height: 1.6; color: #334155 !important;">ระบบ Coaching Online พร้อมให้คำปรึกษาและโค้ชคุณครู เพื่อยกระดับคุณภาพการจัดการเรียนรู้และพัฒนานักเรียนอย่างยั่งยืน</p>
+                </div>
+                <div class="banner-img-group d-none d-md-block">
+                    <!-- แสดงรูปภาพ ศน. รมิดา จำลองความสำเร็จของระบบ -->
+                    <img src="/static/ramida.JPG" class="banner-avatar" style="width: 85px; height: 85px; object-fit: cover; border-radius: 50%;">
+                </div>
+            </div>
+
+            <!-- เมนูปุ่มกิจกรรมเพื่อสนับสนุนครู -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-3">
+                    <div class="action-card-v4"><div class="p-2 rounded-circle mx-auto mb-2 text-success" style="background:#e6f4ea; width:40px; height:40px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-calendar-plus"></i></div><b class="d-block text-dark" style="font-size:13px;">บันทึกตารางนิเทศ</b><small class="text-muted" style="font-size:10.5px;">จัดการเวลาลงพื้นที่ หรือออนไลน์</small></div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="action-card-v4"><div class="p-2 rounded-circle mx-auto mb-2 text-primary" style="background:#eff6ff; width:40px; height:40px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-comment-dots"></i></div><b class="d-block text-dark" style="font-size:13px;">ตอบข้อซักถาม</b><small class="text-muted" style="font-size:10.5px;">ให้คำแนะนำในประเด็นที่ครูถามมา</small></div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="action-card-v4"><div class="p-2 rounded-circle mx-auto mb-2 text-purple" style="background:#f3e8ff; color:#8b5cf6; width:40px; height:40px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-clock-history"></i></div><b class="d-block text-dark" style="font-size:13px;">ติดตามผลสถานศึกษา</b><small class="text-muted" style="font-size:10.5px;">ดูประวัติและความก้าวหน้าของครู</small></div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="action-card-v4"><div class="p-2 rounded-circle mx-auto mb-2 text-warning" style="background:#fffbeb; width:40px; height:40px; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-book-open"></i></div><b class="d-block text-dark" style="font-size:13px;">อัปโหลดสื่อ/คู่มือ</b><small class="text-muted" style="font-size:10.5px;">แชร์เอกสารและเครื่องมือประเมินผล</small></div>
+                </div>
+            </div>
+
+            <!-- การ์ดรายชื่อคุณครูที่รอรับการคัดกรอง / นิเทศจาก ศน. รมิดา -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0" style="color: #1e293b; font-size:14.5px;">รายชื่อครูที่รอรับการคัดกรอง / โค้ชชิ่ง</h6>
+                    <a href="#" class="text-primary fw-bold small text-decoration-none" style="font-size:12px;">ดูทั้งหมด</a>
+                </div>
+                <div class="position-relative">
+                    <div class="row g-2.5">
+                        <!-- ครูคนที่ 1 -->
+                        <div class="col-md-3 col-6">
+                            <div class="coach-card-v4">
+                                <span class="badge bg-success text-white position-absolute" style="top:10px; left:10px; font-size:10px; border-radius:4px;">ออนไลน์</span>
+                                <div class="mx-auto bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; overflow: hidden;"><i class="fa-solid fa-user text-secondary" style="font-size: 40px;"></i></div>
+                                <b class="d-block text-dark mb-0" style="font-size:13px;">คุณครู [ชื่อ-นามสกุล]</b>
+                                <small class="text-muted d-block mb-1" style="font-size:10.5px;">[ระบุตำแหน่ง] / [ระบุวิทยฐานะ]</small>
+                                <p class="text-muted mb-2" style="font-size:10.5px; height:32px; overflow:hidden; line-height:1.4;"<p class="text-muted mb-2" style="font-size:10.5px; height:32px; overflow:hidden; line-height:1.4;"><span class="fw-semibold">หัวข้อ:</span> [รอข้อมูลหัวข้อการนิเทศ]</p>
+                                <div class="text-warning mb-2" style="font-size:11px;"><i class="fa-solid fa-star"></i> 4.9 <span class="text-muted">(128 รีวิว)</span></div>
+                                <button class="btn-schedule-v4">เข้าห้องนิเทศ</button>
+                            </div>
+                        </div>
+                        <!-- ครูคนที่ 2 -->
+                        <div class="col-md-3 col-6">
+                            <div class="coach-card-v4">
+                                <span class="badge bg-success text-white position-absolute" style="top:10px; left:10px; font-size:10px; border-radius:4px;">ออนไลน์</span>
+                                <div class="mx-auto bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; overflow: hidden;"><i class="fa-solid fa-user text-secondary" style="font-size: 40px;"></i></div>
+                                <b class="d-block text-dark mb-0" style="font-size:13px;">คุณครู [ชื่อ-นามสกุล]</b>
+                                <small class="text-muted d-block mb-1" style="font-size:10.5px;">[ระบุตำแหน่ง] / [ระบุวิทยฐานะ]</small>
+                                <p class="text-muted mb-2" style="font-size:10.5px; height:32px; overflow:hidden; line-height:1.4;"<p class="text-muted mb-2" style="font-size:10.5px; height:32px; overflow:hidden; line-height:1.4;"><span class="fw-semibold">หัวข้อ:</span> [รอข้อมูลหัวข้อการนิเทศ]</p>
+                                <div class="text-warning mb-2" style="font-size:11px;"><i class="fa-solid fa-star"></i> 4.8 <span class="text-muted">(96 รีวิว)</span></div>
+                                <button class="btn-schedule-v4">เข้าห้องนิเทศ</button>
+                            </div>
+                        </div>
+                        <!-- ครูคนที่ 3 -->
+                        <div class="col-md-3 col-6">
+                            <div class="coach-card-v4">
+                                <span class="badge bg-light text-secondary position-absolute" style="top:10px; left:10px; font-size:10px; border-radius:4px;">นัดหมาย 10 พ.ค.</span>
+                                <div class="mx-auto bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; overflow: hidden;"><i class="fa-solid fa-user text-secondary" style="font-size: 40px;"></i></div>
+                                <b class="d-block text-dark mb-0" style="font-size:13px;">คุณครู [ชื่อ-นามสกุล]</b>
+                                <small class="text-muted d-block mb-1" style="font-size:10.5px;">[ระบุตำแหน่ง] / [ระบุวิทยฐานะ]</small>
+                                <p class="text-muted mb-2" style="font-size:10.5px; height:32px; overflow:hidden; line-height:1.4;"<p class="text-muted mb-2" style="font-size:10.5px; height:32px; overflow:hidden; line-height:1.4;"><span class="fw-semibold">หัวข้อ:</span> [รอข้อมูลหัวข้อการนิเทศ]</p>
+                                <div class="text-warning mb-2" style="font-size:11px;"><i class="fa-solid fa-star"></i> 4.9 <span class="text-muted">(154 รีวิว)</span></div>
+                                <button class="btn-schedule-v4">ดูรายละเอียด</button>
+                            </div>
+                        </div>
+                        <!-- ครูคนที่ 4 -->
+                        <div class="col-md-3 col-6">
+                            <div class="coach-card-v4">
+                                <span class="badge bg-light text-secondary position-absolute" style="top:10px; left:10px; font-size:10px; border-radius:4px;">นัดหมาย 12 พ.ค.</span>
+                                <div class="mx-auto bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; overflow: hidden;"><i class="fa-solid fa-user text-secondary" style="font-size: 40px;"></i></div>
+                                <b class="d-block text-dark mb-0" style="font-size:13px;">คุณครู [ชื่อ-นามสกุล]</b>
+                                <small class="text-muted d-block mb-1" style="font-size:10.5px;">[ระบุตำแหน่ง] / [ระบุวิทยฐานะ]</small>
+                                <p class="text-muted mb-2" style="font-size:10.5px; height:32px; overflow:hidden; line-height:1.4;"<p class="text-muted mb-2" style="font-size:10.5px; height:32px; overflow:hidden; line-height:1.4;"><span class="fw-semibold">หัวข้อ:</span> [รอข้อมูลหัวข้อการนิเทศ]</p>
+                                <div class="text-warning mb-2" style="font-size:11px;"><i class="fa-solid fa-star"></i> 4.7 <span class="text-muted">(87 รีวิว)</span></div>
+                                <button class="btn-schedule-v4">ดูรายละเอียด</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ตารางสถิติและผลสรุปการโค้ชล่าสุด -->
+            <div class="right-box-v4 p-0 overflow-hidden">
+                <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+                    <h6 class="fw-bold mb-0" style="color:#1e293b; font-size:14px;">ประวัติการนิเทศและติดตามผลล่าสุด</h6>
+                    <a href="#" class="text-primary fw-bold small text-decoration-none" style="font-size:11px;">ดูทั้งหมด</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-coaching-v4 mb-0">
+                        <thead>
+                            <tr><th>วันที่บันทึก</th><th>หัวข้อการนิเทศ</th><th>ครูผู้รับการนิเทศ</th><th>รูปแบบ</th><th style="width:90px; text-align:center;">สถานะ</th><th style="width:80px; text-align:center;">การดำเนินการ</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>[วันที่บันทึก]</td><td class="fw-semibold text-dark">การออกแบบหน่วยการเรียนรู้เชิงรุก (Active Learning)</td><td>[ชื่อ-นามสกุล ครูผู้รับการนิเทศ]</td><td>[รูปแบบ]</td><td class="text-center"><span class="badge bg-success-subtle text-success px-2.5 py-1" style="font-size:10.5px; border-radius:12px;">[สถานะ]</span></td><td class="text-center"><button class="btn btn-sm btn-light border fw-bold text-primary" style="font-size:11px; padding:3px 10px; border-radius:6px;">ดูรายงาน</button></td></tr>
+                            <tr><td>[วันที่บันทึก]</td><td class="fw-semibold text-dark">การใช้ข้อมูลนักเรียนเพื่อพัฒนา IEP</td><td>[ชื่อ-นามสกุล ครูผู้รับการนิเทศ]</td><td>[รูปแบบ]</td><td class="text-center"><span class="badge bg-success-subtle text-success px-2.5 py-1" style="font-size:10.5px; border-radius:12px;">[สถานะ]</span></td><td class="text-center"><button class="btn btn-sm btn-light border fw-bold text-primary" style="font-size:11px; padding:3px 10px; border-radius:6px;">ดูรายงาน</button></td></tr>
+                            <tr><td>[วันที่บันทึก]</td><td class="fw-semibold text-dark">การเสริมแรงเชิงบวกในห้องเรียน</td><td>[ชื่อ-นามสกุล ครูผู้รับการนิเทศ]</td><td>[รูปแบบ]</td><td class="text-center"><span class="badge bg-success-subtle text-success px-2.5 py-1" style="font-size:10.5px; border-radius:12px;">[สถานะ]</span></td><td class="text-center"><button class="btn btn-sm btn-light border fw-bold text-primary" style="font-size:11px; padding:3px 10px; border-radius:6px;">ดูรายงาน</button></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ฝั่งขวา: ปฏิทินปฏิบัติงานและนัดหมายของ ศน. รมิดา -->
+        <div class="col-xl-3 col-lg-4">
+            
+            <!-- ปฏิทินปฏิบัติงาน -->
+            <div class="right-box-v4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <b style="font-size:13px; color:#1e293b;"><i class="fa-solid fa-calendar text-muted me-1.5"></i>ปฏิทินปฏิบัติงาน ศน.</b>
+                    <small class="text-muted fw-bold" style="font-size:11px;"><i class="fa-solid fa-chevron-left me-2"></i>พฤษภาคม 2567<i class="fa-solid fa-chevron-right ms-2"></i></small>
+                </div>
+                <div class="cal-grid-v4 mb-2"><div class="cal-day-v4">อา</div><div class="cal-day-v4">จ</div><div class="cal-day-v4">อ</div><div class="cal-day-v4">พ</div><div class="cal-day-v4">พฤ</div><div class="cal-day-v4">ศ</div><div class="cal-day-v4">ส</div></div>
+                <div class="cal-grid-v4 mb-1" style="color:#94a3b8;"><div class="cal-num-v4">28</div><div class="cal-num-v4">29</div><div class="cal-num-v4">30</div><div class="cal-num-v4 text-dark">1</div><div class="cal-num-v4 text-dark">2</div><div class="cal-num-v4 text-dark">3</div><div class="cal-num-v4 text-dark">4</div></div>
+                <div class="cal-grid-v4 mb-1"><div class="cal-num-v4">5</div><div class="cal-num-v4">6</div><div class="cal-num-v4">7</div><div class="cal-num-v4 has-dot">8</div><div class="cal-num-v4 has-dot">9</div><div class="cal-num-v4 active">10</div><div class="cal-num-v4">11</div></div>
+                <div class="cal-grid-v4 mb-1"><div class="cal-num-v4">12</div><div class="cal-num-v4">13</div><div class="cal-num-v4">14</div><div class="cal-num-v4">15</div><div class="cal-num-v4">16</div><div class="cal-num-v4">17</div><div class="cal-num-v4">18</div></div>
+                <div class="cal-grid-v4 mb-3"><div class="cal-num-v4">19</div><div class="cal-num-v4">20</div><div class="cal-num-v4">21</div><div class="cal-num-v4">22</div><div class="cal-num-v4">23</div><div class="cal-num-v4">24</div><div class="cal-num-v4">25</div></div>
+                <div class="d-flex justify-content-between gap-1 mt-2 text-muted fw-semibold" style="font-size:10px;">
+                    <div><i class="fa-solid fa-circle text-success me-1"></i>มีนัดนิเทศ</div><div><i class="fa-solid fa-circle text-primary me-1"></i>รอดำเนินการ</div><div><i class="fa-solid fa-circle text-purple me-1"></i>เสร็จสิ้น</div>
+                </div>
+            </div>
+
+            <!-- รายละเอียดเวลานัดหมายของคุณครู -->
+            <div class="right-box-v4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <b style="font-size:13px; color:#1e293b;">ตารางนัดหมายของฉัน</b>
+                    <a href="#" class="small text-decoration-none fw-bold" style="font-size:11px;">ดูทั้งหมด</a>
+                </div>
+                <!-- รายการนัด 1 -->
+                <div class="p-2.5 rounded-3 mb-2 border" style="background:#f8fafc;">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="text-muted fw-bold" style="font-size:11px;">10 พ.ค.</span>
+                        <span class="badge bg-success-subtle text-success" style="font-size:9.5px; border-radius:4px;">ยืนยันแล้ว</span>
+                    </div>
+                    <small class="text-muted d-block" style="font-size:10.5px;">09:00 - 10:00 น.</small>
+                    <b class="text-dark d-block my-0.5" style="font-size:12.5px;">Coaching: การจัดทำ IEP</b>
+                    <small class="text-muted d-block" style="font-size:11px;">ครูอัจฉรา ศรีแสง <i class="fa-solid fa-video text-primary ms-1"></i></small>
+                </div>
+                <!-- รายการนัด 2 -->
+                <div class="p-2.5 rounded-3 mb-2 border" style="background:#f8fafc;">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="text-muted fw-bold" style="font-size:11px;">17 พ.ค.</span>
+                        <span class="badge bg-primary-subtle text-primary" style="font-size:9.5px; border-radius:4px;">รอดำเนินการ</span>
+                    </div>
+                    <small class="text-muted d-block" style="font-size:10.5px;">13:30 - 14:30 น.</small>
+                    <b class="text-dark d-block my-0.5" style="font-size:12.5px;">Coaching: การวัดและประเมินผล</b>
+                    <small class="text-muted d-block" style="font-size:11px;">ครูวัชรพงษ์ คำภา <i class="fa-solid fa-video text-primary ms-1"></i></small>
+                </div>
+                <button class="btn btn-success btn-sm w-100 fw-bold mt-2" style="border-radius:8px; background:#22c55e !important; border:none; height:36px;">+ เพิ่มเวลาเปิดนัดหมาย</button>
+            </div>
+
+            <!-- เอกสารและคู่มือสนับสนุน -->
+            <div class="right-box-v4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <b style="font-size:13px; color:#1e293b;">เครื่องมือและคู่มือการนิเทศ</b>
+                    <a href="#" class="small text-decoration-none fw-bold" style="font-size:11px;">ดูทั้งหมด</a>
+                </div>
+                <div class="d-flex gap-2">
+                    <div class="tool-card-v4"><i class="fa-solid fa-file-invoice text-purple fs-4 mb-1" style="color:#8b5cf6;"></i><span class="d-block fw-bold" style="font-size:11px;">เกณฑ์การประเมิน</span></div>
+                    <div class="tool-card-v4"><i class="fa-solid fa-clipboard-check text-success fs-4 mb-1"></i><span class="d-block fw-bold" style="font-size:11px;">แบบฟอร์มนิเทศ</span></div>
+                    <div class="tool-card-v4"><i class="fa-solid fa-photo-film text-warning fs-4 mb-1"></i><span class="d-block fw-bold" style="font-size:11px;">คลังสื่อแนะนำ</span></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+        <div id="page-dashboard" class="menu-page">
+    <style>
+        /* สไตล์หลักถอดแบบจากภาพ ChatGPT Image Jun 13, 2026, 01_17_27 PM.png */
+        .sd-blue-header {
+            background: linear-gradient(135deg, #0f4c81 0%, #1d70b8 100%) !important;
+            color: #ffffff !important;
+            border-radius: 12px !important;
+            padding: 20px !important;
+        }
+        .sd-card {
+            background: #ffffff !important;
+            border: 1px solid #dee2e6 !important;
+            border-radius: 12px !important;
+            padding: 15px !important;
+            margin-bottom: 15px !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+        }
+        .sd-section-title {
+            font-size: 15px !important;
+            font-weight: bold !important;
+            color: #0f4c81 !important;
+            border-bottom: 2px solid #0f4c81;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        .sd-box-stat {
+            background: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        .sd-circle-progress {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(#22c55e 100%, #e9ecef 0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        .sd-circle-inner {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .sd-donut-chart {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: conic-gradient(#0056b3 0% 96.55%, #6f42c1 96.55% 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        .sd-bar-vertical {
+            width: 25px;
+            background-color: #28a745;
+            border-radius: 4px 4px 0 0;
+            display: inline-block;
+            margin: 0 8px;
+            position: relative;
+        }
+        .sd-bar-label {
+            font-size: 10px;
+            color: #6c757d;
+            display: block;
+            margin-top: 5px;
+            white-space: nowrap;
+        }
+        /* สไตล์สำหรับจุดอัปโหลดรูป */
+        .upload-placeholder {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 11px;
+            text-align: center;
+        }
+    </style>
+
+    <!-- ส่วนหัวรายงาน (Header) -->
+    <div class="row g-3 mb-3">
+        <!-- ฝั่งซ้าย: ข้อมูลโรงเรียน (เปิดให้โรงเรียนใส่ตราโลโก้ และชื่อตัวเอง) -->
+        <div class="col-md-6">
+            <div class="p-3 bg-white border rounded-3 d-flex align-items-center gap-3 h-100">
+                <!-- จุดใส่โลโก้โรงเรียน (เปลี่ยน URL รูปภาพตรงนี้ได้เลย) -->
+                <div class="upload-placeholder rounded-circle" style="width:65px; height:65px; flex-shrink: 0;">
+                    <!-- <img src="โลโก้โรงเรียน.png" style="width:100%; height:100%; object-fit:contain;"> -->
+                    <i class="fa-solid fa-image-user fs-4 d-block mb-0.5"></i>ตราโรงเรียน
+                </div>
+                <div>
+                    <h4 class="fw-bold text-primary mb-1" style="font-size: 20px;">รายงานผลการนิเทศสรุป</h4>
+                    <!-- ชื่อโรงเรียน (เปลี่ยนตรงนี้ หรือใช้ตัวแปรดึงจากระบบ) -->
+                    <h5 class="fw-bold text-dark mb-1" style="font-size: 18px;">[ชื่อโรงเรียนของท่าน]</h5>
+                    <p class="text-muted mb-0 small"><i class="fa-solid fa-location-dot me-1"></i>สำนักงานเขตพื้นที่การศึกษามัธยมศึกษาหนองคาย</p>
+                    <span class="badge bg-primary mt-2" style="font-size: 11px;"><i class="fa-solid fa-calendar-days me-1"></i>ข้อมูล ณ วันที่ 10 มิถุนายน 2568</span>
+                </div>
+            </div>
+        </div>
+        <!-- ฝั่งขวา: หัวข้อระบบ Dashboard IEP -->
+        <div class="col-md-6">
+            <div class="sd-blue-header h-100 d-flex flex-column justify-content-between">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="fw-bold mb-0" style="font-size: 22px;">ระบบ Dashboard IEP</h4>
+                        <!-- ชื่อโรงเรียนสะท้อนฝั่งขวา -->
+                        <p class="mb-0 opacity-75 small">[ชื่อโรงเรียนของท่าน]</p>
+                    </div>
+                    <i class="fa-solid fa-chart-pie fs-1 opacity-50"></i>
+                </div>
+                <!-- แถวสรุปข้อมูลพื้นฐานด้านบนของบอร์ดขวา -->
+                <div class="row g-2 mt-2">
+                    <div class="col-3"><div class="bg-white text-dark rounded p-1 text-center small" style="font-size:10.5px;"><b class="d-block text-primary">รวมทั้งหมด</b><b>29 คน</b></div></div>
+                    <div class="col-3"><div class="bg-white text-dark rounded p-1 text-center small" style="font-size:10.5px;"><b class="d-block text-info">ชาย</b><b>24 คน</b></div></div>
+                    <div class="col-3"><div class="bg-white text-dark rounded p-1 text-center small" style="font-size:10.5px;"><b class="d-block text-danger">หญิง</b><b>5 คน</b></div></div>
+                    <div class="col-3"><div class="bg-white text-dark rounded p-1 text-center small" style="font-size:10.5px;"><b class="d-block text-success">จัดทำ IEP</b><b>29 คน</b></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- แถวเนื้อหาหลักแบ่ง ซ้าย-ขวา ตามภาพเป้าหมาย -->
+    <div class="row g-3">
+        
+        <!-- =================== ฝั่งซ้าย: ข้อมูลพื้นฐาน & ข้อค้นพบ =================== -->
+        <div class="col-lg-5">
+            <!-- กล่องข้อมูลพื้นฐาน -->
+            <div class="sd-card">
+                <div class="sd-section-title">ข้อมูลพื้นฐานของโรงเรียน</div>
+                <div class="row g-2 text-center">
+                    <div class="col-6">
+                        <div class="sd-box-stat p-2"><i class="fa-solid fa-users text-primary mb-1"></i><small class="d-block text-muted" style="font-size:11px;">นักเรียนเรียนรวมทั้งหมด</small><b style="font-size:16px;">29 คน</b></div>
+                    </div>
+                    <div class="col-3">
+                        <div class="sd-box-stat p-2"><i class="fa-solid fa-mars text-info mb-1"></i><small class="d-block text-muted" style="font-size:11px;">ชาย</small><b>24 คน</b></div>
+                    </div>
+                    <div class="col-3">
+                        <div class="sd-box-stat p-2"><i class="fa-solid fa-venus text-danger mb-1"></i><small class="d-block text-muted" style="font-size:11px;">หญิง</small><b>5 คน</b></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- สัดส่วนความบกพร่องซ้าย -->
+            <div class="sd-card">
+                <div class="sd-section-title">สัดส่วนความบกพร่องของนักเรียนเรียนรวม</div>
+                <div class="row align-items-center">
+                    <div class="col-5 text-center">
+                        <div class="sd-donut-chart"><div class="bg-white rounded-circle d-flex flex-column align-items-center justify-content-center" style="width:90px; height:90px;"><small class="text-muted" style="font-size:10px;">รวมทั้งสิ้น</small><b style="font-size:15px; color:#111;">29 คน</b><small class="text-primary fw-bold" style="font-size:10px;">(100%)</small></div></div>
+                    </div>
+                    <div class="col-7" style="font-size: 12px;">
+                        <div class="mb-2">
+                            <i class="fa-solid fa-circle text-primary me-1"></i> <b>บกพร่องทางการเรียนรู้</b><br>
+                            <span class="ps-3 text-dark fw-bold">28 คน (96.55%)</span><br>
+                            <small class="ps-3 text-muted">มีความบกพร่องในการอ่าน เขียน คำนวณ</small>
+                        </div>
+                        <div>
+                            <i class="fa-solid fa-circle text-purple me-1" style="color:#6f42c1 !important;"></i> <b>บกพร่องทางสติปัญญา</b><br>
+                            <span class="ps-3 text-dark fw-bold">1 คน (3.45%)</span><br>
+                            <small class="ps-3 text-muted">มีความบกพร่องระดับเล็กน้อย</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ข้อค้นพบ & ข้อเสนอแนะ -->
+            <div class="sd-card">
+                <div class="row g-2">
+                    <div class="col-12">
+                        <div class="p-2 rounded-3" style="background-color: #f4fbf7; border: 1px solid #d1eedc; font-size: 12px;">
+                            <b class="text-success d-block mb-1"><i class="fa-solid fa-square-check me-1"></i> ข้อค้นพบจากการนิเทศ</b>
+                            <ul class="margin-0 ps-3 mb-0 text-dark" style="padding-left: 15px !important;">
+                                <li>ครูจัดทำแผน IEP ครบถ้วนและเหมาะสมกับผู้เรียน</li>
+                                <li>มีการประเมินความก้าวหน้าและบันทึกข้อมูลต่อเนื่อง</li>
+                                <li>สื่อ/นวัตกรรมสอดคล้องความต้องการผู้เรียน</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="p-2 rounded-3" style="background-color: #fffdf5; border: 1px solid #fff3cd; font-size: 12px;">
+                            <b class="text-warning d-block mb-1" style="color:#b58105 !important;"><i class="fa-solid fa-lightbulb me-1"></i> ข้อเสนอแนะ</b>
+                            <ul class="margin-0 ps-3 mb-0 text-dark" style="padding-left: 15px !important;">
+                                <li>ส่งเสริมการจัดการเรียนรู้แนวคิด Higher Order Thinking</li>
+                                <li>พัฒนาสื่อและนวัตกรรมให้หลากหลายและทันสมัย</li>
+                                <li>สร้างเครือข่ายความร่วมมือกับหน่วยงานภายนอก</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================== ฝั่งขวา: รายละเอียดสถิติเชิงลึกบอร์ดใหญ่ =================== -->
+        <div class="col-lg-7">
+            <!-- ความก้าวหน้าการจัดทำ IEP -->
+            <div class="sd-card">
+                <div class="row align-items-center">
+                    <div class="col-6 border-end text-center">
+                        <div class="sd-section-title text-start">ความก้าวหน้าในการจัดทำ IEP</div>
+                        <div class="sd-circle-progress">
+                            <div class="sd-circle-inner"><span style="font-size:18px; color:#22c55e;">100%</span></div>
+                        </div>
+                        <small class="text-muted d-block mt-2">จัดทำครบถ้วน <b>29 คน</b> (เป้าหมาย 100%)</small>
+                    </div>
+                    <!-- Status -->
+                    <div class="col-6">
+                        <div class="sd-section-title">สถานะการจัดทำและติดตาม IEP</div>
+                        <div class="row g-2 text-center" style="font-size:11px;">
+                            <div class="col-6"><div class="p-1 rounded border bg-light"><b class="text-success d-block">จัดทำแล้ว</b><b>29 คน (100%)</b></div></div>
+                            <div class="col-6"><div class="p-1 rounded border bg-light"><b class="text-primary d-block">อยู่ระหว่างทำ</b><b>0 คน (0%)</b></div></div>
+                            <div class="col-6"><div class="p-1 rounded border bg-light"><b class="text-danger d-block">ยังไม่ทำ</b><b>0 คน (0%)</b></div></div>
+                            <div class="col-6"><div class="p-1 rounded border bg-light"><b class="text-purple d-block" style="color:#6f42c1 !important;">ติดตามแล้ว</b><b>29 คน (100%)</b></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ความก้าวหน้าทักษะและกิจกรรม -->
+            <div class="sd-card">
+                <div class="row g-2">
+                    <!-- กราฟแท่งทักษะเป้าหมาย -->
+                    <div class="col-7 border-end text-center">
+                        <div class="sd-section-title text-start">ความก้าวหน้าทักษะเป้าหมาย (โดยรวม)</div>
+                        <div class="d-flex justify-content-center align-items-end" style="height: 100px; padding-bottom:10px;">
+                            <div class="text-center"><span style="font-size:10px;" class="d-block fw-bold">85%</span><div class="sd-bar-vertical" style="height: 65px;"></div><span class="sd-bar-label">ด้านการอ่าน</span></div>
+                            <div class="text-center"><span style="font-size:10px;" class="d-block fw-bold">78%</span><div class="sd-bar-vertical" style="height: 58px; background-color: #20c997;"></div><span class="sd-bar-label">ด้านการเขียน</span></div>
+                            <div class="text-center"><span style="font-size:10px;" class="d-block fw-bold">81%</span><div class="sd-bar-vertical" style="height: 62px; background-color: #0d6efd;"></div><span class="sd-bar-label">ด้านคณิตฯ</span></div>
+                            <div class="text-center"><span style="font-size:10px;" class="d-block fw-bold">74%</span><div class="sd-bar-vertical" style="height: 52px; background-color: #fd7e14;"></div><span class="sd-bar-label">ด้านสังคม</span></div>
+                            <div class="text-center"><span style="font-size:10px;" class="d-block fw-bold">88%</span><div class="sd-bar-vertical" style="height: 70px; background-color: #6f42c1;"></div><span class="sd-bar-label">การดำเนินชีวิต</span></div>
+                        </div>
+                    </div>
+                    <!-- การเข้าร่วมกิจกรรม -->
+                    <div class="col-5">
+                        <div class="sd-section-title">การเข้าร่วมกิจกรรม</div>
+                        <div style="font-size: 11px;" class="text-dark">
+                            <div class="mb-1.5">
+                                <div class="d-flex justify-content-between"><span>เรียนรวมในห้องเรียน</span><b>100%</b></div>
+                                <div class="progress" style="height: 5px;"><div class="progress-bar bg-primary" style="width: 100%"></div></div>
+                            </div>
+                            <div class="mb-1.5">
+                                <div class="d-flex justify-content-between"><span>กิจกรรมเสริมทักษะ</span><b>96%</b></div>
+                                <div class="progress" style="height: 5px;"><div class="progress-bar bg-success" style="width: 96%"></div></div>
+                            </div>
+                            <div class="mb-1.5">
+                                <div class="d-flex justify-content-between"><span>กิจกรรมบำบัด/ส่งเสริม</span><b>93%</b></div>
+                                <div class="progress" style="height: 5px;"><div class="progress-bar bg-warning" style="width: 93%"></div></div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between"><span>การมีส่วนร่วมผู้ปกครอง</span><b>95%</b></div>
+                                <div class="progress" style="height: 5px;"><div class="progress-bar bg-info" style="width: 95%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ตารางสรุปข้อมูลรายบุคคลสั้นๆ -->
+            <div class="sd-card p-0 overflow-hidden" style="margin-bottom:0 !important;">
+                <div class="p-2 border-bottom"><b style="font-size:13px;" class="text-dark">สรุปข้อมูลนักเรียนรายบุคคล</b></div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0" style="font-size:11.5px; vertical-align: middle;">
+                        <thead class="table-light">
+                            <tr><th>ลำดับ</th><th>รหัสนักเรียน</th><th>เพศ</th><th>ประเภทความบกพร่อง</th><th>สถานะ IEP</th><th>ความก้าวหน้า</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>6801001</td><td>ชาย</td><td>บกพร่องทางการเรียนรู้</td><td><span class="text-success fw-bold">จัดทำแล้ว</span></td><td class="fw-bold text-primary">85%</td></tr>
+                            <tr><td>2</td><td>6801002</td><td>ชาย</td><td>บกพร่องทางการเรียนรู้</td><td><span class="text-success fw-bold">จัดทำแล้ว</span></td><td class="fw-bold text-primary">78%</td></tr>
+                            <tr><td>3</td><td>6801003</td><td>ชาย</td><td>บกพร่องทางการเรียนรู้</td><td><span class="text-success fw-bold">จัดทำแล้ว</span></td><td class="fw-bold text-primary">82%</td></tr>
+                            <tr><td>29</td><td>6801029</td><td>ชาย</td><td>บกพร่องทางสติปัญญา</td><td><span class="text-success fw-bold">จัดทำแล้ว</span></td><td class="fw-bold text-primary">70%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ส่วนล่างสุด: ผู้รับผิดชอบข้อมูลและผู้รับรอง (ศน. รมิดา & พื้นที่อัปโหลดรูป/ชื่อ ผอ. โรงเรียน) -->
+    <div class="row g-3 mt-1">
+        <!-- ฝั่งซ้าย: ผู้ประสานงาน (ฟิกซ์เป็น ท่าน ศน. รมิดา พรีเมียม) -->
+        <div class="col-md-6">
+            <div class="p-2.5 rounded-3 border bg-white d-flex align-items-center gap-3">
+                <img src="/static/ramida.JPG" class="rounded-3 border" style="width:55px; height:65px; object-fit:cover;">
+                <div>
+                    <small class="text-muted d-block" style="font-size:11px;">ผู้ประสานงานข้อมูล</small>
+                    <b class="text-dark d-block" style="font-size:14px;">นางรมิดา ประเสริฐ</b>
+                    <span class="badge bg-secondary-subtle text-secondary" style="font-size:10.5px;">ศึกษานิเทศก์</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ฝั่งขวา: ผู้รับรองข้อมูล (เปิดเป็น Dynamic ให้แต่ละโรงเรียนนำไปเปลี่ยนรูปและชื่อ ผอ. เอง) -->
+        <div class="col-md-6">
+            <div class="p-2.5 rounded-3 border bg-white d-flex align-items-center gap-3">
+                <!-- จุดอัปโหลดรูปภาพผู้บริหาร -->
+                <div class="upload-placeholder rounded-3 border" style="width:55px; height:65px; flex-shrink: 0;">
+                    <!-- <img src="รูปผอ.png" style="width:100%; height:100%; object-fit:cover;"> -->
+                    <i class="fa-solid fa-user-tie fs-4 d-block mb-0.5"></i>รูป ผอ.
+                </div>
+                <div>
+                    <small class="text-muted d-block" style="font-size:11px;">ผู้รับรองข้อมูล</small>
+                    <!-- ชื่อ-นามสกุล ผอ. (เปิดช่องว่างไว้ให้โรงเรียนเปลี่ยนกรอกเอง) -->
+                    <b class="text-dark d-block" style="font-size:14px;">[ชื่อ-นามสกุล ผู้อำนวยการโรงเรียน]</b>
+                    <span class="badge bg-primary-subtle text-primary" style="font-size:10.5px;">ผู้อำนวยการโรงเรียน</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- ========================================== -->
+        <!-- [เมนู 6] หน้า AI-Assisted IEP Analysis (หน้าหลักเริ่มต้น) -->
+        <!-- ========================================== -->
+        <div id="page-ai-analysis" class="menu-page active-page">
+            <div class="custom-card">
+                <div class="p-3 text-center border rounded bg-light" style="border-style: dashed !important; cursor: pointer;" onclick="alert('ระบบจำลองการอัปโหลดเอกสาร PDF')">
+                    <i class="fa-solid fa-cloud-arrow-up fs-2 text-muted mb-2"></i>
+                    <h6 class="m-0 fw-bold">อัปโหลดไฟล์แผน IEP ของโรงเรียนเพื่อเริ่มการวิเคราะห์ด้วย AI</h6>
+                    <p class="text-muted small mb-2">รองรับไฟล์ประเภท .pdf, .docx (ขนาดไม่เกิน 25MB)</p>
+                    <button class="btn btn-primary btn-sm"><i class="fa-solid fa-file-import me-1"></i> เลือกไฟล์อัปโหลดใหม่</button>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm p-4 bg-white h-100" style="border-radius:16px;">
+                        <div class="d-flex align-items-start justify-content-between">
+                            <div class="d-flex gap-3">
+                                <div class="bg-light p-3 rounded text-danger fs-3"><i class="fa-solid fa-file-pdf"></i></div>
+                                <div>
+                                    <h6 class="fw-bold mb-1" style="font-family:'Prompt';">แผน IEP ที่กำลังวิเคราะห์</h6>
+                                    <p class="text-primary fw-medium mb-2" style="font-size:14px;">IEP_ด.ช.กานต์พัฒน์ ใจดี.pdf</p>
+                                    <div class="d-flex flex-wrap gap-3 text-muted" style="font-size:11.5px;">
+                                        <span><i class="fa-solid fa-user me-1"></i> ชื่อนักเรียน: ด.ช.กานต์พัฒน์ ใจดี</span>
+                                        <span><i class="fa-solid fa-graduation-cap me-1"></i> ระดับชั้น: ม.2/1</span>
+                                        <span><i class="fa-solid fa-brain me-1"></i> ความบกพร่องทางการเรียนรู้</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm p-3 bg-white h-100 text-center" style="border-radius:16px;">
+                        <span class="text-muted fw-bold d-block mb-2" style="font-size:13px;">คุณภาพแผน IEP โดยรวม</span>
+                        <div class="analysis-score-circle mb-2">
+                            <span class="fs-3 fw-bold text-dark m-0" style="line-height:1;">87</span>
+                            <small class="text-muted" style="font-size:10px;">คะแนนรวม (จาก 100)</small>
+                        </div>
+                        <div><span class="ai-badge-success"><i class="fa-solid fa-circle-check me-1"></i> ดีมาก</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <h6 class="fw-bold mb-3" style="font-family:'Prompt';"><i class="fa-solid fa-chart-pie text-primary me-2"></i>ผลการวิเคราะห์รายองค์ประกอบ (6 ด้าน)</h6>
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="score-box-mini">
+                        <small class="text-muted d-block text-truncate" style="font-size:11px;">1. ข้อมูลนักเรียน</small>
+                        <div class="score-progress-circle" style="border-color: #3b82f6; color: #3b82f6;">95</div>
+                        <span class="badge bg-success-subtle text-success" style="font-size:10px;">ดีมาก</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="score-box-mini">
+                        <small class="text-muted d-block text-truncate" style="font-size:11px;">2. การประเมินความต้องการ</small>
+                        <div class="score-progress-circle" style="border-color: #10b981; color: #10b981;">85</div>
+                        <span class="badge bg-success-subtle text-success" style="font-size:10px;">ดี</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="score-box-mini">
+                        <small class="text-muted d-block text-truncate" style="font-size:11px;">3. เป้าหมาย IEP</small>
+                        <div class="score-progress-circle" style="border-color: #8b5cf6; color: #8b5cf6;">90</div>
+                        <span class="badge bg-success-subtle text-success" style="font-size:10px;">ดีมาก</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="score-box-mini">
+                        <small class="text-muted d-block text-truncate" style="font-size:11px;">4. แผนจัดการเรียนรู้</small>
+                        <div class="score-progress-circle" style="border-color: #f59e0b; color: #f59e0b;">80</div>
+                        <span class="badge bg-success-subtle text-success" style="font-size:10px;">ดี</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="score-box-mini">
+                        <small class="text-muted d-block text-truncate" style="font-size:11px;">5. การวัดและประเมินผล</small>
+                        <div class="score-progress-circle" style="border-color: #ef4444; color: #ef4444;">75</div>
+                        <span class="badge bg-warning-subtle text-warning" style="font-size:10px;">พอใช้</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="score-box-mini">
+                        <small class="text-muted d-block text-truncate" style="font-size:11px;">6. การมีส่วนร่วม</small>
+                        <div class="score-progress-circle" style="border-color: #ec4899; color: #ec4899;">90</div>
+                        <span class="badge bg-success-subtle text-success" style="font-size:10px;">ดีมาก</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="custom-card">
+                        <div class="row">
+                            <div class="col-md-6 border-end pe-3">
+                                <h6 class="fw-bold text-success mb-3" style="font-size:14px;"><i class="fa-solid fa-circle-check me-2"></i>จุดเด่นของแผน IEP นี้</h6>
+                                <ul class="small text-muted ps-3" style="line-height:1.8;">
+                                    <li>กำหนดเป้าหมายที่สอดคล้องกับความต้องการของผู้เรียน</li>
+                                    <li>มีกระบวนการจัดการเรียนรู้ที่หลากหลายและเหมาะสม</li>
+                                    <li>ระบุผู้รับผิดชอบและระยะเวลาในการดำเนินงานชัดเจน</li>
+                                    <li>มีการประเมินความก้าวหน้าอย่างต่อเนื่อง</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6 ps-3">
+                                <h6 class="fw-bold text-danger mb-3" style="font-size:14px;"><i class="fa-solid fa-triangle-exclamation me-2"></i>ควรพัฒนาเพิ่มเติม (Priority)</h6>
+                                <ul class="small text-muted ps-3" style="line-height:1.8;">
+                                    <li>การวัดและประเมินผลยังขาดเกณฑ์ที่ชัดเจน</li>
+                                    <li>ควรเพิ่มการกำหนดเครื่องมือประเมินที่หลากหลาย</li>
+                                    <li>ควรระบุแนวทางการปรับแผนเมื่อไม่เป็นไปตามเป้าหมาย</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="custom-card">
+                        <h6 class="fw-bold mb-3" style="font-family:'Prompt';"><i class="fa-solid fa-chart-line text-primary me-2"></i>กราฟแสดงพัฒนาการคุณภาพแผน IEP (ย้อนหลัง 5 ครั้ง)</h6>
+                        <div class="ai-chart-placeholder">
+                            <div class="chart-line-mock"></div>
+                            <div class="chart-dot" style="bottom: 30px; left: 15%;"></div>
+                            <div class="chart-dot" style="bottom: 45px; left: 35%;"></div>
+                            <div class="chart-dot" style="bottom: 60px; left: 55%;"></div>
+                            <div class="chart-dot" style="bottom: 75px; left: 75%;"></div>
+                            <div class="chart-dot" style="bottom: 87px; left: 92%;"></div>
+                            
+                            <div class="w-100 d-flex justify-content-between text-muted small px-2" style="position:absolute; bottom:15px; left:0;">
+                                <span>ครั้งที่ 1 (65)</span>
+                                <span>ครั้งที่ 2 (72)</span>
+                                <span>ครั้งที่ 3 (78)</span>
+                                <span>ครั้งที่ 4 (83)</span>
+                                <span>ครั้งที่ 5 (87)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <h6 class="fw-bold mb-3" style="font-family:'Prompt';"><i class="fa-solid fa-wand-magic-sparkles text-primary me-2"></i>ข้อเสนอแนะเจาะลึกจาก AI</h6>
+                    
+                    <div class="ai-tip-card" style="background-color: #f3f4ff; border-left: 4px solid #6366f1;">
+                        <span class="fw-bold text-primary d-block mb-1" style="font-size:12px;"><i class="fa-solid fa-pencil"></i> ปรับปรุงการวัดและประเมินผล</span>
+                        <p class="m-0 text-muted" style="font-size:12px;">แนะนำให้กำหนดเกณฑ์การประเมินให้ชัดเจนและวัดผลได้จริง</p>
+                        <button class="btn btn-sm btn-primary py-0 px-2 mt-2" style="font-size:10px;">ดูตัวอย่าง</button>
+                    </div>
+
+                    <div class="ai-tip-card" style="background-color: #e6f4ea; border-left: 4px solid #10b981;">
+                        <span class="fw-bold text-success d-block mb-1" style="font-size:12px;"><i class="fa-solid fa-folder-plus"></i> เพิ่มเครื่องมือประเมิน</span>
+                        <p class="m-0 text-muted" style="font-size:12px;">แนะนำให้ใช้แบบประเมินที่หลากหลายเพื่อความแม่นยำในการวัดผล</p>
+                        <button class="btn btn-sm btn-success py-0 px-2 mt-2" style="font-size:10px;">ดูตัวอย่าง</button>
+                    </div>
+
+                    <div class="ai-tip-card" style="background-color: #fef7e0; border-left: 4px solid #f59e0b;">
+                        <span class="fw-bold text-warning d-block mb-1" style="font-size:12px;"><i class="fa-solid fa-lightbulb"></i> แนวทางการปรับแผน</span>
+                        <p class="m-0 text-muted" style="font-size:12px;">แนะนำให้ระบุแนวทางปรับปรุงแผนการเรียนรู้เมื่อเด็กไม่บรรลุเป้าหมาย</p>
+                        <button class="btn btn-sm btn-warning py-0 px-2 mt-2" style="font-size:10px; color:white;">ดูตัวอย่าง</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- [เมนู 5] หน้า Supervision Reflection (ตารางฟอร์มเต็มรูปแบบ) -->
+        <!-- ========================================== -->
+        <div id="page-reflection" class="menu-page">
+            <div class="custom-card text-center py-4" style="border-bottom: 3px solid #0d2e5c;">
+                <div class="d-flex justify-content-center align-items-center gap-3 mb-2">
+                    <img src="static/area-logo.png" alt="Logo" style="width: 55px; height: 55px; object-fit: contain;" onerror="this.style.display='none'">
+                    <h3 class="fw-bold m-0 text-dark" style="font-family: 'Prompt', sans-serif;">เครื่องมือนิเทศการศึกษาเชิงระบบโดยใช้นวัตกรรม IN-CARE <span style="color: #eab308;">Plus</span></h3>
+                </div>
+                <h6 class="text-secondary fw-medium">สู่การพัฒนาคุณภาพผู้เรียนอย่างยั่งยืน (Supervision Tool: IN-CARE Plus Model)</h6>
+                <div class="badge bg-light text-dark border px-3 py-2 mt-2 small text-wrap" style="max-width: 800px; line-height: 1.4;">
+                    <strong>วัตถุประสงค์:</strong> เพื่อใช้เป็นแนวทางในการนิเทศ กำกับ ติดตาม และประเมินผลการจัดการศึกษา ผ่านกระบวนการนิเทศ IN-CARE Plus Model อย่างเป็นระบบ
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-9 col-lg-8">
+                    
+                    <div class="custom-card shadow-sm">
+                        <div class="form-section-title">ส่วนที่ 1 ข้อมูลพื้นฐาน</div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <span class="small fw-bold text-muted">1. โรงเรียน :</span>
+                                <input type="text" class="form-control input-dotted d-inline-block w-75" value="โรงเรียนบ้านหนองคายวิทยา">
+                            </div>
+                            <div class="col-md-6">
+                                <span class="small fw-bold text-muted">2. ผู้รับการนิเทศ :</span>
+                                <input type="text" class="form-control input-dotted d-inline-block w-70" placeholder="ระบุชื่อครูผู้รับการนิเทศ">
+                            </div>
+                            <div class="col-md-4">
+                                <span class="small fw-bold text-muted">3. ตำแหน่ง :</span>
+                                <input type="text" class="form-control input-dotted d-inline-block w-70" placeholder="ระบุตำแหน่ง">
+                            </div>
+                            <div class="col-md-4">
+                                <span class="small fw-bold text-muted">4. วันที่นิเทศ :</span>
+                                <input type="text" class="form-control input-dotted d-inline-block w-70" value="15 มิถุนายน 2026">
+                            </div>
+                            <div class="col-md-4">
+                                <span class="small fw-bold text-muted">5. ภาคเรียนที่ :</span>
+                                <input type="text" class="form-control input-dotted" style="width: 40px;" value="1">
+                                <span class="small fw-bold text-muted">ปีการศึกษา :</span>
+                                <input type="text" class="form-control input-dotted" style="width: 70px;" value="2026">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="custom-card shadow-sm">
+                        <div class="form-section-title">ส่วนที่ 3 เกณฑ์การนิเทศและประเมินผล</div>
+                        <div class="table-responsive">
+                            <table class="main-sup-table">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2" class="text-start" style="min-width: 300px;">รายการประเมิน</th>
+                                        <th colspan="5">ระดับคุณภาพ</th>
+                                        <th rowspan="2" style="min-width: 180px;">ข้อค้นพบ/หลักฐาน/ข้อเสนอแนะ</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="width: 55px; font-size:11px;">5<br>ยอดเยี่ยม</th>
+                                        <th style="width: 55px; font-size:11px;">4<br>ดีมาก</th>
+                                        <th style="width: 55px; font-size:11px;">3<br>ดี</th>
+                                        <th style="width: 55px; font-size:11px;">2<br>พอใช้</th>
+                                        <th style="width: 55px; font-size:11px;">1<br>ปรับปรุง</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>1. การวิเคราะห์ปัญหาและบริบท (I)</strong><br><span class="text-muted small">วิเคราะห์สภาพปัญหา/ความต้องการของผู้เรียนและกำหนดเป้าหมายชัดเจน</span></td>
+                                        <td class="center-radio"><input type="radio" name="item_1" value="5" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_1" value="4" class="calc-radio" checked></td>
+                                        <td class="center-radio"><input type="radio" name="item_1" value="3" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_1" value="2" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_1" value="1" class="calc-radio"></td>
+                                        <td><input type="text" class="form-control form-control-sm border-0" placeholder="ระบุข้อเสนอแนะ..."></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>2. การกำหนดความต้องการจำเป็น (N)</strong><br><span class="text-muted small">กำหนดความต้องการจำเป็นสอดคล้องกับปัญหาและเป้าหมาย</span></td>
+                                        <td class="center-radio"><input type="radio" name="item_2" value="5" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_2" value="4" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_2" value="3" class="calc-radio" checked></td>
+                                        <td class="center-radio"><input type="radio" name="item_2" value="2" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_2" value="1" class="calc-radio"></td>
+                                        <td><input type="text" class="form-control form-control-sm border-0" placeholder="ระบุข้อเสนอแนะ..."></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>3. การออกแบบแนวทาง/นวัตกรรม (C)</strong><br><span class="text-muted small">ออกแบบแนวทาง/นวัตกรรมตอบโจทย์ความต้องการจำเป็น</span></td>
+                                        <td class="center-radio"><input type="radio" name="item_3" value="5" class="calc-radio" checked></td>
+                                        <td class="center-radio"><input type="radio" name="item_3" value="4" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_3" value="3" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_3" value="2" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_3" value="1" class="calc-radio"></td>
+                                        <td><input type="text" class="form-control form-control-sm border-0" placeholder="ระบุข้อเสนอแนะ..."></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>4. การดำเนินการตามแผน (A)</strong><br><span class="text-muted small">ดำเนินการตามแผนอย่างเป็นระบบ มีการใช้สื่อ/เทคนิคที่เหมาะสม</span></td>
+                                        <td class="center-radio"><input type="radio" name="item_4" value="5" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_4" value="4" class="calc-radio" checked></td>
+                                        <td class="center-radio"><input type="radio" name="item_4" value="3" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_4" value="2" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_4" value="1" class="calc-radio"></td>
+                                        <td><input type="text" class="form-control form-control-sm border-0" placeholder="ระบุข้อเสนอแนะ..."></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>5. การนิเทศ ติดตาม และสะท้อนผล (R)</strong><br><span class="text-muted small">มีการนิเทศ ติดตาม ให้ข้อเสนอแนะ และสะท้อนผลอย่างต่อเนื่อง</span></td>
+                                        <td class="center-radio"><input type="radio" name="item_5" value="5" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_5" value="4" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_5" value="3" class="calc-radio" checked></td>
+                                        <td class="center-radio"><input type="radio" name="item_5" value="2" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_5" value="1" class="calc-radio"></td>
+                                        <td><input type="text" class="form-control form-control-sm border-0" placeholder="ระบุข้อเสนอแนะ..."></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>6. การประเมินผลและพัฒนาอย่างต่อเนื่อง (E)</strong><br><span class="text-muted small">ประเมินผลการดำเนินงานและนำผลไปพัฒนาต่อยอด</span></td>
+                                        <td class="center-radio"><input type="radio" name="item_6" value="5" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_6" value="4" class="calc-radio" checked></td>
+                                        <td class="center-radio"><input type="radio" name="item_6" value="3" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_6" value="2" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_6" value="1" class="calc-radio"></td>
+                                        <td><input type="text" class="form-control form-control-sm border-0" placeholder="ระбуข้อเสนอแนะ..."></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>7. การสร้างเครือข่ายและชุมชนแห่งการเรียนรู้ (Plus)</strong><br><span class="text-muted small">มีการแลกเปลี่ยนเรียนรู้ สร้างเครือข่าย และขยายผลสู่ความยั่งยืน</span></td>
+                                        <td class="center-radio"><input type="radio" name="item_7" value="5" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_7" value="4" class="calc-radio" checked></td>
+                                        <td class="center-radio"><input type="radio" name="item_7" value="3" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_7" value="2" class="calc-radio"></td>
+                                        <td class="center-radio"><input type="radio" name="item_7" value="1" class="calc-radio"></td>
+                                        <td><input type="text" class="form-control form-control-sm border-0" placeholder="ระบุข้อเสนอแนะ..."></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="custom-card shadow-sm" style="background-color: #f0f4f8; border-left: 5px solid #0d2e5c;">
+                        <div class="form-section-title">ส่วนที่ 4 สรุปผลการนิเทศ</div>
+                        <div class="row align-items-center g-3">
+                            <div class="col-md-3">
+                                <span class="small fw-bold">คะแนนรวม:</span>
+                                <span id="lbl-sum-score" class="fw-bold text-primary fs-5 ms-1">0</span> / 35 คะแนน
+                            </div>
+                            <div class="col-md-3">
+                                <span class="small fw-bold">คิดเป็นร้อยละ:</span>
+                                <span id="lbl-percentage" class="fw-bold text-success fs-5 ms-1">0.0%</span>
+                            </div>
+                            <div class="col-md-6 d-flex flex-wrap gap-2 align-items-center">
+                                <span class="small fw-bold me-1">ระดับคุณภาพ:</span>
+                                <div class="form-check form-check-inline m-0"><input type="checkbox" class="form-check-input feedback-chk" id="chk-cat-5" disabled> <label class="form-check-label small" for="chk-cat-5">ยอดเยี่ยม</label></div>
+                                <div class="form-check form-check-inline m-0"><input type="checkbox" class="form-check-input feedback-chk" id="chk-cat-4" disabled> <label class="form-check-label small" for="chk-cat-4">ดีมาก</label></div>
+                                <div class="form-check form-check-inline m-0"><input type="checkbox" class="form-check-input feedback-chk" id="chk-cat-3" disabled> <label class="form-check-label small" for="chk-cat-3">ดี</label></div>
+                                <div class="form-check form-check-inline m-0"><input type="checkbox" class="form-check-input feedback-chk" id="chk-cat-2" disabled> <label class="form-check-label small" for="chk-cat-2">พอใช้</label></div>
+                                <div class="form-check form-check-inline m-0"><input type="checkbox" class="form-check-input feedback-chk" id="chk-cat-1" disabled> <label class="form-check-label small" for="chk-cat-1">ปรับปรุง</label></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="custom-card shadow-sm">
+                        <div class="form-section-title">ส่วนที่ 5 ข้อเสนอแนะเพื่อการพัฒนา</div>
+                        <div class="row g-3">
+                            <div class="col-md-4 border-end">
+                                <h6 class="fw-bold text-success small mb-2"><i class="fa-solid fa-star me-1"></i> จุดเด่นที่ควรยกย่อง</h6>
+                                <input type="text" class="form-control form-control-sm mb-2 input-dotted" value="1. มีการวางแผนและวิเคราะห์บริบทผู้เรียนได้ชัดเจน">
+                                <input type="text" class="form-control form-control-sm mb-2 input-dotted" placeholder="2.">
+                                <input type="text" class="form-control form-control-sm input-dotted" placeholder="3.">
+                            </div>
+                            <div class="col-md-4 border-end">
+                                <h6 class="fw-bold text-warning small mb-2"><i class="fa-solid fa-triangle-exclamation me-1"></i> ประเด็นที่ควรพัฒนา</h6>
+                                <input type="text" class="form-control form-control-sm mb-2 input-dotted" value="1. ควรเพิ่มสื่อเทคโนโลยีเข้ามาประยุกต์ใช้ในกิจกรรม">
+                                <input type="text" class="form-control form-control-sm mb-2 input-dotted" placeholder="2.">
+                                <input type="text" class="form-control form-control-sm input-dotted" placeholder="3.">
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="fw-bold text-primary small mb-2"><i class="fa-solid fa-lightbulb me-1"></i> แนวทางการพัฒนาจากศึกษานิเทศก์</h6>
+                                <input type="text" class="form-control form-control-sm mb-2 input-dotted" value="1. แนะนำให้ใช้เครื่องมือในคลังสื่อสารสนเทศกลาง">
+                                <input type="text" class="form-control form-control-sm mb-2 input-dotted" placeholder="2.">
+                                <input type="text" class="form-control form-control-sm input-dotted" placeholder="3.">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="custom-card shadow-sm mb-5">
+                        <div class="row g-4">
+                            <div class="col-md-4 border-end">
+                                <div class="form-section-title" style="background-color: #334155;">ส่วนที่ 6 การติดตามผล</div>
+                                <div class="mb-2">
+                                    <span class="small text-muted fw-bold">กำหนดติดตามครั้งต่อไป:</span>
+                                    <input type="text" class="form-control input-dotted mt-1" placeholder="ระบุรายละเอียด">
+                                </div>
+                                <div class="mb-2">
+                                    <span class="small text-muted fw-bold">วันที่:</span>
+                                    <input type="date" class="form-control input-dotted mt-1">
+                                </div>
+                                <div>
+                                    <span class="small text-muted fw-bold">ประเด็นการติดตาม:</span>
+                                    <input type="text" class="form-control input-dotted mt-1" placeholder="ระบุประเด็นย่อย">
+                                </div>
+                            </div>
+                            <div class="col-md-8 small">
+                                <div class="row g-2 text-center pt-3">
+                                    <div class="col-6 mb-3">
+                                        <p class="mb-4">ลงชื่อ......................................................ผู้รับการนิเทศ</p>
+                                        <p class="text-muted">(......................................................)</p>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <p class="mb-4">ลงชื่อ......................................................ผู้ให้นิเทศ</p>
+                                        <p class="text-dark fw-medium">(นางรมิดา ประเสริฐ)</p>
+                                        <p class="text-muted" style="font-size:11px;">ตำแหน่ง ศึกษานิเทศก์</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-xl-3 col-lg-4">
+                    <!-- บล็อกโมเดลโครงสร้างย่อยด้านซ้าย (ปรับปรุงความคมชัดและสีสันตามภาพ image_934fdc.png) -->
+                    <div class="guide-paper-box">
+                        <div class="guide-paper-title">องค์ประกอบหลักของตัวแบบนิเทศ</div>
+                        <div class="model-component-box">
+                            <div class="model-circle bg-icon-i">I</div>
+                            <div class="small"><b>Identification</b><br><span class="text-muted" style="font-size:10.5px;">วิเคราะห์บริบทสภาพปัญหา</span></div>
+                        </div>
+                        <div class="model-component-box">
+                            <div class="model-circle bg-icon-n">N</div>
+                            <div class="small"><b>Need Analysis</b><br><span class="text-muted" style="font-size:10.5px;">กำหนดความต้องการจำเป็น</span></div>
+                        </div>
+                        <div class="model-component-box">
+                            <div class="model-circle bg-icon-c">C</div>
+                            <div class="small"><b>Curriculum adaptation</b><br><span class="text-muted" style="font-size:10.5px;">ออกแบบแนวทาง/หลักสูตร</span></div>
+                        </div>
+                        <div class="model-component-box">
+                            <div class="model-circle bg-icon-a">A</div>
+                            <div class="small"><b>Action & implementation</b><br><span class="text-muted" style="font-size:10.5px;">ดำเนินการตามแผนแจ่มชัด</span></div>
+                        </div>
+                        <div class="model-component-box">
+                            <div class="model-circle bg-icon-r">R</div>
+                            <div class="small"><b>Reflection</b><br><span class="text-muted" style="font-size:10.5px;">นิเทศติดตามและสะท้อนคิด</span></div>
+                        </div>
+                        <div class="model-component-box">
+                            <div class="model-circle bg-icon-e">E</div>
+                            <div class="small"><b>Evaluation</b><br><span class="text-muted" style="font-size:10.5px;">ประเมินผลเพื่อการพัฒนา</span></div>
+                        </div>
+                        <div class="model-component-box">
+                            <div class="model-circle bg-icon-p">P</div>
+                            <div class="small"><b>Plus (Sustainable Network)</b><br><span class="text-muted" style="font-size:10.5px;">สร้างเครือข่ายอย่างยั่งยืน</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT SYSTEM ENGINE (ฟังก์ชันสลับแท็บและคำนวณคะแนน) -->
+    <!-- ========================================== -->
+    <script>
+        // 1. ฟังก์ชันสำหรับสลับแท็บหน้าจอหลัก (Tab Switching Engine)
+        function switchMainTab(pageId, btnId, iconClass, titleText, subtitleText) {
+            const pages = document.querySelectorAll('.menu-page');
+            pages.forEach(page => page.classList.remove('active-page'));
+
+            const targetPage = document.getElementById(pageId);
+            if(targetPage) {
+                targetPage.classList.add('active-page');
+            }
+
+            const menuItems = document.querySelectorAll('.sidebar-item');
+            menuItems.forEach(item => item.classList.remove('active'));
+
+            const currentBtn = document.getElementById(btnId);
+            if(currentBtn) {
+                currentBtn.classList.add('active');
+            }
+
+            document.getElementById('topbar-title').innerText = titleText;
+            document.getElementById('topbar-subtitle').innerText = subtitleText;
+            document.getElementById('topbar-icon').className = `fa-solid ${iconClass} fs-4 text-primary`;
+        }
+
+        // 2. ฟังก์ชันคำนวณผลคะแนนรวมฟอร์มนิเทศเชิงระบบอัตโนมัติ
+        function computeSupervisionScores() {
+            let scoreSum = 0;
+            const totalMaxScore = 35;
+
+            for (let i = 1; i <= 7; i++) {
+                const checkedRadio = document.querySelector(`input[name="item_${i}"]:checked`);
+                if (checkedRadio) {
+                    scoreSum += parseInt(checkedRadio.value);
+                }
+            }
+
+            const percentage = (scoreSum / totalMaxScore) * 100;
+
+            document.getElementById('lbl-sum-score').innerText = scoreSum;
+            document.getElementById('lbl-percentage').innerText = percentage.toFixed(1) + '%';
+
+            document.querySelectorAll('.feedback-chk').forEach(chk => chk.checked = false);
+
+            if (percentage >= 90.0) {
+                document.getElementById('chk-cat-5').checked = true;
+            } else if (percentage >= 80.0) {
+                document.getElementById('chk-cat-4').checked = true;
+            } else if (percentage >= 70.0) {
+                document.getElementById('chk-cat-3').checked = true;
+            } else if (percentage >= 50.0) {
+                document.getElementById('chk-cat-2').checked = true;
+            } else {
+                document.getElementById('chk-cat-1').checked = true;
+            }
+        }
+
+        // 3. เริ่มผูกคำสั่งระบบเมื่อหน้าเว็บเบราว์เซอร์เตรียมความพร้อมเสร็จสิ้น
+        document.addEventListener('DOMContentLoaded', function() {
+            const allScoreRadios = document.querySelectorAll('.calc-radio');
+            allScoreRadios.forEach(radio => {
+                radio.addEventListener('change', computeSupervisionScores);
+            });
+
+            computeSupervisionScores();
+
+            const profileInput = document.getElementById('profile-upload-input');
+            const topbarProfileImg = document.getElementById('topbar-profile-img');
+
+            profileInput.addEventListener('change', function() {
+                const selectedFile = this.files[0];
+                if (selectedFile) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        topbarProfileImg.src = e.target.result;
+                    };
+                    reader.readAsDataURL(selectedFile);
+                }
+            });
+        });
+    </script>
+    <script>
+// ฟังก์ชันดึงสถิติรายโรงเรียนมาอัปเดตหน้าจออัตโนมัติ
+async function updateSchoolDashboard(schoolName = 'โรงเรียนปทุมเทพวิทยาคาร') {
+    try {
+        const response = await fetch(`/api/dashboard/school?school_name=${encodeURIComponent(schoolName)}`);
+        if (!response.ok) return;
+        const data = await response.json();
+
+        // 1. อัปเดตชื่อโรงเรียนในจุดต่าง ๆ บนหน้าจอ
+        const schoolTitleElements = document.querySelectorAll('.sd-card, h4, div');
+        schoolTitleElements.forEach(el => {
+            if (el.textContent.includes('[ชื่อโรงเรียนของท่าน]')) {
+                el.innerHTML = el.innerHTML.replace(/\[ชื่อโรงเรียนของท่าน\]/g, data.school_info.name);
+            }
+        });
+
+        // 2. อัปเดตตัวเลขสถิติภาพรวม ชาย-หญิง ในระบบ
+        const statBoxes = document.querySelectorAll('.text-center b, .sd-card span');
+        statBoxes.forEach(el => {
+            if (el.textContent.includes('29 คน')) el.textContent = `${data.stats.total} คน`;
+            if (el.textContent.includes('24 คน')) el.textContent = `${data.stats.male} คน`;
+            if (el.textContent.includes('5 คน')) el.textContent = `${data.stats.female} คน`;
+        });
+
+    } catch (error) {
+        console.error("Error updating dashboard:", error);
+    }
+}
+
+// สั่งให้ระบบผูกสัญญาณทันทีเมื่อกดเปิดหน้าเมนู
+document.addEventListener('DOMContentLoaded', () => {
+    // ดักจับปุ่มเมนู School Dashboard ตัวซ้ายมือ
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    sidebarItems.forEach(item => {
+        if (item.textContent.includes('School Dashboard')) {
+            item.addEventListener('click', () => {
+                // เรียกข้อมูลโรงเรียนเริ่มต้นมาป้อนลงระบบทันที
+                updateSchoolDashboard('โรงเรียนปทุมเทพวิทยาคาร');
+            });
+        }
+    });
+});
+// ==========================================
+// สคริปต์ควบคุมเมนู Supervision Reflection (31 โรงเรียน)
+// ==========================================
+async function updateSupervisionReflection(teacherName = '', schoolName = 'โรงเรียนปทุมเทพวิทยาคาร') {
+    try {
+        // ยิงข้อมูลไปหาหลังบ้านเวอร์ชัน v2 ที่เราแก้ผ่านฉลุยเมื่อกี้
+        const response = await fetch(`/api/supervision/reflection_v3?teacher_name=${encodeURIComponent(teacherName)}&school_name=${encodeURIComponent(schoolName)}`);
+        if (!response.ok) return;
+        const data = await response.json();
+
+        // หยอดชื่อโรงเรียนและครูที่ดึงมาลงบนหน้ากากเว็บแบบไดนามิก
+        if (document.getElementById('ref-school-name')) {
+            document.getElementById('ref-school-name').textContent = data.basic_info.school_name;
+        }
+        if (document.getElementById('ref-teacher-name')) {
+            document.getElementById('ref-teacher-name').textContent = data.basic_info.teacher_name;
+        }
+        
+        console.log("IN-CARE Plus v2 Dashboard Connected!");
+    } catch (error) {
+        console.error("Error drawing supervision data:", error);
+    }
+}
+
+// เปิดม่านรับสัญญาณเมื่อคลิกเลือกเมนู Supervision Reflection ด้านซ้ายมือ
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    sidebarItems.forEach(item => {
+        if (item.textContent.includes('Supervision Reflection')) {
+            item.addEventListener('click', () => {
+                // เรียกให้ดึงข้อมูลโรงเรียนในคลัง 31 โรงเรียนมาหยอด (เริ่มต้นที่ปทุมเทพฯ)
+                updateSupervisionReflection('', 'โรงเรียนปทุมเทพวิทยาคาร');
+            });
+        }
+    });
+});
+</script>
+</body>
+</html>
