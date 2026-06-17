@@ -624,7 +624,7 @@
                 </div>
                 <div class="banner-img-group d-none d-md-block">
                     <!-- แสดงรูปภาพ ศน. รมิดา จำลองความสำเร็จของระบบ -->
-                    <img src="/static/ramida.JPG" class="banner-avatar" style="width: 85px; height: 85px; object-fit: cover; border-radius: 50%;">
+                    <img src="{{ url_for('static', filename='ramida.jpg') }}" alt class="w-px-40 h-auto rounded-circle" />
                 </div>
             </div>
 
@@ -1081,7 +1081,7 @@
         <!-- ฝั่งซ้าย: ผู้ประสานงาน (ฟิกซ์เป็น ท่าน ศน. รมิดา พรีเมียม) -->
         <div class="col-md-6">
             <div class="p-2.5 rounded-3 border bg-white d-flex align-items-center gap-3">
-                <img src="/static/ramida.JPG" class="rounded-3 border" style="width:55px; height:65px; object-fit:cover;">
+                <img src="{{ url_for('static', filename='ramida.jpg') }}" alt class="w-px-40 h-auto rounded-circle" />
                 <div>
                     <small class="text-muted d-block" style="font-size:11px;">ผู้ประสานงานข้อมูล</small>
                     <b class="text-dark d-block" style="font-size:14px;">นางรมิดา ประเสริฐ</b>
