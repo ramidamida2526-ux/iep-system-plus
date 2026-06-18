@@ -496,16 +496,7 @@ def analyze_iep_with_ai(behavior_text, plan_text):
             "strengths": ["ระบบกำลังเตรียมประมวลผลข้อมูล"],
             "improvements": ["กรุณาตรวจสอบสถานะ API Key ของคุณ"]
         }
-    
-# 🎯 เส้นทางสำหรับหน้าแบบฟอร์มอัปโหลดแผน IEP และบันทึกข้อมูล
-@app.route('/submit-iep', methods=['GET', 'POST'])
-@login_required
-def submit_iep():
-    if request.method == 'POST':
-        # 1. ดึงข้อมูลจากฟอร์มที่ครูกรอกมา
-        school_name = request.form.get('school_name')
-        academic_year = request.form.get('academic_year')
-        file = request.files.get('iep_file')
+
         
         if file and school_name and academic_year:
             # 2. ตั้งชื่อไฟล์ใหม่ป้องกันชื่อซ้ำ และเซฟลงโฟลเดอร์ uploads
