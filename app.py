@@ -541,8 +541,3 @@ if __name__ == '__main__':
         traceback.print_exc()
         input("\n[กด Enter เพื่อปิดหน้าต่างนี้]")
 
-# 🎯 เพิ่มเส้นทางสำหรับให้คุณครูเข้าหน้าฟอร์มส่งแผน IEP
-@app.route('/submit-iep', methods=['GET'])
-def submit_iep():
-    # เมื่อคุณครูเรียกหน้านี้ ให้ระบบแสดงผลไฟล์แบบฟอร์ม submit_iep.html
-    return render_template('submit_iep.html')       
