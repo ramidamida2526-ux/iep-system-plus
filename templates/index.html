@@ -1154,7 +1154,7 @@
                     <div class="card border-0 shadow-sm p-3 bg-white h-100 text-center" style="border-radius:16px;">
                         <span class="text-muted fw-bold d-block mb-2" style="font-size:13px;">คุณภาพแผน IEP โดยรวม</span>
                         <div class="analysis-score-circle mb-2">
-                            <span class="fs-3 fw-bold text-dark m-0" style="line-height:1;">87</span>
+                            <span class="fs-3 fw-bold text-dark m-0" style="line-height:1;">{{ total_score if total_score else '--' }}</span>
                             <small class="text-muted" style="font-size:10px;">คะแนนรวม (จาก 100)</small>
                         </div>
                         <div><span class="ai-badge-success"><i class="fa-solid fa-circle-check me-1"></i> ดีมาก</span></div>
