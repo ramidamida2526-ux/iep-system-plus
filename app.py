@@ -32,6 +32,17 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(100), nullable=False)
     role = db.Column(db.String(20), nullable=False)
 
+# 3. ตารางสำหรับเก็บประวัติการอัปโหลดและข้อมูลแผน IEP ของคุณครู
+class IEPSubmission(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    teacher_name = db.Column(db.String(150), nullable=False)  # ชื่อครูผู้ส่ง
+    school_name = db.Column(db.String(200), nullable=False)   # ชื่อโรงเรียน
+    academic_year = db.Column(db.String(10), nullable=False)  # ปีการศึกษา
+    file_path = db.Column(db.String(300), nullable=False)      # ที่อยู่ไฟล์ในเซิร์ฟเวอร์
+    score = db.Column(db.Integer, default=0)                  # คะแนนวิเคราะห์
+    status = db.Column(db.String(50), default="รอการประเมิน") # สถานะแผน
+    submitted_at = db.Column(db.DateTime, default=db.func.current_timestamp()) # วันเวลาที่ส่ง
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -436,6 +447,39 @@ def analyze_iep_with_ai(behavior_text, plan_text):
             "strengths": ["ระบบกำลังเตรียมประมวลผลข้อมูล"],
             "improvements": ["กรุณาตรวจสอบสถานะ API Key ของคุณ"]
         }
+    
+# 🎯 เส้นทางสำหรับหน้าแบบฟอร์มอัปโหลดแผน IEP และบันทึกข้อมูล
+@app.route('/submit-iep', methods=['GET', 'POST'])
+@login_required
+def submit_iep():
+    if request.method == 'POST':
+        # 1. ดึงข้อมูลจากฟอร์มที่ครูกรอกมา
+        school_name = request.form.get('school_name')
+        academic_year = request.form.get('academic_year')
+        file = request.files.get('iep_file')
+        
+        if file and school_name and academic_year:
+            # 2. ตั้งชื่อไฟล์ใหม่ป้องกันชื่อซ้ำ และเซฟลงโฟลเดอร์ uploads
+            filename = f"IEP_{academic_year}_{school_name}_{current_user.name}.pdf"
+            # (ตรวจสอบให้มั่นใจว่าสร้างโฟลเดอร์ uploads รอไว้แล้ว)
+            file_path = f"uploads/{filename}"
+            file.save(file_path)
+            
+            # 3. บันทึกประวัติลงฐานข้อมูล SQLite
+            new_submission = IEPSubmission(
+                teacher_name=current_user.name,
+                school_name=school_name,
+                academic_year=academic_year,
+                file_path=file_path,
+                score=85, # สุ่มคะแนนจำลองไว้ก่อน เดี๋ยวเราเอา AI จริงมาต่อยอดทีหลังครับ ศน.
+                status="วิเคราะห์เสร็จสิ้น"
+            )
+            db.session.add(new_submission)
+            db.session.commit()
+            
+            return f"<script>alert('อัปโหลดและบันทึกข้อมูลสำเร็จ!'); window.location.href='/';</script>"
+            
+    return render_template('submit_iep.html')    
 @app.route('/api/supervision/reflection', methods=['GET'])
 @login_required
 def get_supervision_reflection():
