@@ -1683,5 +1683,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+<style>
+/* ชุดคำสั่งปลดล็อกโครงสร้าง จัดระเบียบจอมือถือโดยเฉพาะ */
+@media (max-width: 991.98px) {
+    /* สั่งให้โครงสร้างหลักเลิกแบ่งซ้ายขวา ให้เปลี่ยนมาเรียงต่อกันเป็นแนวดิ่งบน-ล่างแทน */
+    body > .d-flex, 
+    div[class*="d-flex"].flex-grow-1,
+    .d-flex {
+        flex-direction: column !important;
+        display: flex !important;
+    }
+    
+    /* สั่งให้แถบเมนูซ้าย และ กล่องเนื้อหาหลักฝั่งขวา กางความกว้างเต็ม 100% หน้าจอ */
+    .sidebar, 
+    .main-content, 
+    div[style*="width:"], 
+    .container-fluid {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+
+    /* ปลดล็อกปุ่มและกล่องอัปโหลดด้านในให้กางแผ่เต็มหน้าจอ อ่านง่ายแนวตั้งตามปกติ */
+    .card, 
+    div[style*="border: 2px dashed"] {
+        width: 100% !important;
+    }
+}
+</style>
 </body>
 </html>
