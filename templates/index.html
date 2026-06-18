@@ -1684,9 +1684,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <style>
-/* ชุดคำสั่งปรับแต่งจอมือถือ จัดระเบียบเนื้อหาให้ดีดขึ้นด้านบน */
+/* 🎯 ชุดโค้ดกู้คืนระบบและจัดระเบียบโครงสร้างมือถือให้แผ่กว้างเต็มจอ */
 @media (max-width: 991.98px) {
-    /* สั่งให้โครงสร้างสลับแนวดิ่ง */
+    /* สั่งให้โครงสร้างหลักเปลี่ยนมาเรียงต่อกันเป็นบน-ล่าง ไม่เบียดซ้ายขวา */
     body > .d-flex, 
     div[class*="d-flex"].flex-grow-1,
     .d-flex {
@@ -1694,28 +1694,24 @@ document.addEventListener('DOMContentLoaded', () => {
         display: flex !important;
     }
     
-    /* 🎯 ปรับแต่งแถบเมนู (Sidebar) ในมือถือให้แบนและสั้นลง จะได้ไม่บังเนื้อหา */
-    .sidebar, .border-end.bg-white {
+    /* สั่งให้ทั้งเมนูและเนื้อหาฝั่งขวาแผ่กว้างเต็มหน้าจอ 100% อ่านง่าย */
+    .sidebar, 
+    .main-content, 
+    div[style*="width:"], 
+    .container-fluid {
         width: 100% !important;
         max-width: 100% !important;
-        padding: 10px !important;
-    }
-    
-    /* ซ่อนหัวข้อเมนูที่ยังไม่จำเป็นในจอมือถือชั่วคราว เพื่อประหยัดพื้นที่ */
-    .sidebar p.text-muted, 
-    .sidebar-item:not(.active) { 
-        display: none !important; 
+        min-width: 100% !important;
+        flex: 0 0 100% !important;
     }
 
-    /* สั่งให้เนื้อหาหลักฝั่งขวาแผ่เต็มจอ และดันขึ้นด้านบนทันที */
+    /* สั่งให้กล่องเนื้อหาหลัก (แดชบอร์ด) ขยับเว้นระยะห่างลงมาจากเมนู จะได้ไม่ซ้อนทับกัน */
     .main-content {
-        width: 100% !important;
-        max-width: 100% !important;
-        padding: 15px !important;
-        margin-top: 5px !important;
+        padding-top: 30px !important;
+        padding-bottom: 50px !important;
     }
 
-    /* บังคับกล่องการ์ดทุกใบให้กว้างเต็มพิกัด */
+    /* บังคับกล่องการ์ดทุกใบให้กว้างเต็มหน้าจอปกติ */
     .card, div[style*="border: 2px dashed"] {
         width: 100% !important;
     }
