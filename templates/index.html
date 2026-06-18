@@ -1684,9 +1684,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <style>
-/* ชุดคำสั่งปลดล็อกโครงสร้าง จัดระเบียบจอมือถือโดยเฉพาะ */
+/* ชุดคำสั่งปรับแต่งจอมือถือ จัดระเบียบเนื้อหาให้ดีดขึ้นด้านบน */
 @media (max-width: 991.98px) {
-    /* สั่งให้โครงสร้างหลักเลิกแบ่งซ้ายขวา ให้เปลี่ยนมาเรียงต่อกันเป็นแนวดิ่งบน-ล่างแทน */
+    /* สั่งให้โครงสร้างสลับแนวดิ่ง */
     body > .d-flex, 
     div[class*="d-flex"].flex-grow-1,
     .d-flex {
@@ -1694,20 +1694,29 @@ document.addEventListener('DOMContentLoaded', () => {
         display: flex !important;
     }
     
-    /* สั่งให้แถบเมนูซ้าย และ กล่องเนื้อหาหลักฝั่งขวา กางความกว้างเต็ม 100% หน้าจอ */
-    .sidebar, 
-    .main-content, 
-    div[style*="width:"], 
-    .container-fluid {
+    /* 🎯 ปรับแต่งแถบเมนู (Sidebar) ในมือถือให้แบนและสั้นลง จะได้ไม่บังเนื้อหา */
+    .sidebar, .border-end.bg-white {
         width: 100% !important;
         max-width: 100% !important;
-        min-width: 100% !important;
-        flex: 0 0 100% !important;
+        padding: 10px !important;
+    }
+    
+    /* ซ่อนหัวข้อเมนูที่ยังไม่จำเป็นในจอมือถือชั่วคราว เพื่อประหยัดพื้นที่ */
+    .sidebar p.text-muted, 
+    .sidebar-item:not(.active) { 
+        display: none !important; 
     }
 
-    /* ปลดล็อกปุ่มและกล่องอัปโหลดด้านในให้กางแผ่เต็มหน้าจอ อ่านง่ายแนวตั้งตามปกติ */
-    .card, 
-    div[style*="border: 2px dashed"] {
+    /* สั่งให้เนื้อหาหลักฝั่งขวาแผ่เต็มจอ และดันขึ้นด้านบนทันที */
+    .main-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 15px !important;
+        margin-top: 5px !important;
+    }
+
+    /* บังคับกล่องการ์ดทุกใบให้กว้างเต็มพิกัด */
+    .card, div[style*="border: 2px dashed"] {
         width: 100% !important;
     }
 }
