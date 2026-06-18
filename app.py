@@ -88,8 +88,7 @@ def login():
             flash('ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง', 'danger')
             
     return render_template('login.html')
-# ... บรรทัดสุดท้ายของฟังก์ชัน login() เดิมของ ศน. ...
-        return render_template('login.html')
+
 
 # 🎯 วางโค้ด /register ต่อท้ายตรงนี้ได้เลยครับ ศน. (ชิดซ้ายสุด)
 @app.route('/register', methods=['GET', 'POST'])
