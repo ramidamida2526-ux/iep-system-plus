@@ -457,6 +457,31 @@ def get_iep_tracking():
         return jsonify(tracking_data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500   
+@app.route('/upload_iep', methods=['POST'])
+def upload_iep():
+    try:
+        if 'file' not in request.files:
+            return jsonify({"success": False, "message": "ไม่พบไฟล์ที่อัปโหลด"})
+        
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({"success": False, "message": "ชื่อไฟล์ว่างเปล่า"})
+
+        # อ่านข้อความในไฟล์มาส่งให้ AI
+        plan_text = file.read().decode('utf-8', errors='ignore')
+        behavior_text = "ข้อมูลพฤติกรรมเริ่มต้น"
+
+        # ส่งต่อให้ฟังก์ชัน Gemini บรรทัดล่างวิเคราะห์ผล
+        ai_result = analyze_iep_with_ai(behavior_text, plan_text)
+        
+        return jsonify({
+            "success": True, 
+            "message": "ระบบ AI วิเคราะห์แผน IEP เรียบร้อยแล้ว!",
+            "result": ai_result
+        })
+    except Exception as e:
+        return jsonify({"success": False, "message": f"เกิดข้อผิดพลาด: {str(e)}"})
+
 def analyze_iep_with_ai(behavior_text, plan_text):
     try:
         # เรียกใช้โมเดล Gemini 1.5 Flash
