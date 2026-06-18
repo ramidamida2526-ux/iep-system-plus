@@ -457,7 +457,7 @@ def get_iep_tracking():
         return jsonify(tracking_data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500   
-@app.route('/upload_iep', methods=['POST'])
+@app.route('/submit-iep', methods=['POST'])
 def upload_iep():
     try:
         if 'file' not in request.files:
