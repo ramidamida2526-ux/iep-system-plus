@@ -1684,36 +1684,25 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <style>
-/* 🎯 ชุดโค้ดกู้คืนระบบและจัดระเบียบโครงสร้างมือถือให้แผ่กว้างเต็มจอ */
+/* 🎯 โค้ดป้องกันเนื้อหาหาย และช่วยขยายพื้นที่จอมือถือแบบปลอดภัย */
 @media (max-width: 991.98px) {
-    /* สั่งให้โครงสร้างหลักเปลี่ยนมาเรียงต่อกันเป็นบน-ล่าง ไม่เบียดซ้ายขวา */
-    body > .d-flex, 
-    div[class*="d-flex"].flex-grow-1,
-    .d-flex {
-        flex-direction: column !important;
-        display: flex !important;
-    }
-    
-    /* สั่งให้ทั้งเมนูและเนื้อหาฝั่งขวาแผ่กว้างเต็มหน้าจอ 100% อ่านง่าย */
-    .sidebar, 
-    .main-content, 
-    div[style*="width:"], 
-    .container-fluid {
+    /* ปลดล็อกพื้นที่เนื้อหาฝั่งขวา ไม่ให้ถูกจำกัดสิทธิ์ในจอมือถือ */
+    .main-content {
+        display: block !important;
         width: 100% !important;
         max-width: 100% !important;
-        min-width: 100% !important;
-        flex: 0 0 100% !important;
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        padding: 15px !important;
     }
 
-    /* สั่งให้กล่องเนื้อหาหลัก (แดชบอร์ด) ขยับเว้นระยะห่างลงมาจากเมนู จะได้ไม่ซ้อนทับกัน */
-    .main-content {
-        padding-top: 30px !important;
-        padding-bottom: 50px !important;
-    }
-
-    /* บังคับกล่องการ์ดทุกใบให้กว้างเต็มหน้าจอปกติ */
-    .card, div[style*="border: 2px dashed"] {
+    /* สั่งให้กล่องการ์ดและกล่องอัปโหลดดื้อ ๆ ยอมแผ่ความกว้างออกไปให้อ่านง่าย */
+    .card, 
+    div[style*="border: 2px dashed"],
+    .topbar {
         width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
 }
 </style>
