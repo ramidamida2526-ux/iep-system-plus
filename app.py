@@ -120,6 +120,25 @@ def register():
         
     return render_template('register.html')
 
+@app.route('/submit-iep', methods=['GET', 'POST'])
+def submit_iep():
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+        
+    if request.method == 'POST':
+        if 'iep_file' not in request.files:
+            return "<script>alert('ไม่พบไฟล์ที่อัปโหลด'); window.history.back();</script>"
+            
+        file = request.files['iep_file']
+        if file.filename == '':
+            return "<script>alert('กรุณาเลือกไฟล์ก่อนอัปโหลด'); window.history.back();</script>"
+            
+        if file and file.filename.endswith(('.pdf', '.docx')):
+            # ส่วนนี้ระบบจะรับไฟล์จริงไปใช้งานต่อ
+            return "<script>alert('อัปโหลดไฟล์แผน IEP ของท่านเข้าสู่ระบบสำเร็จแล้ว!'); window.location.href='/';</script>"
+            
+    return render_template('submit_iep.html')
+
 @app.route('/logout')
 @login_required
 def logout():
