@@ -1120,15 +1120,15 @@
         <!-- ========================================== -->
         <div id="page-ai-analysis" class="menu-page active-page">
             <div class="custom-card">
-                <a href="/submit-iep" class="p-3 text-center border rounded bg-light d-block text-decoration-none" style="border-style: dashed !important; cursor: pointer;">
-    <i class="fa-solid fa-cloud-arrow-up fs-2 text-muted mb-2"></i>
-    <h6 class="m-0 fw-bold text-dark">อัปโหลดไฟล์แผน IEP ของโรงเรียนเพื่อเริ่มการวิเคราะห์ด้วย AI</h6>
-    <p class="text-muted small mb-2">รองรับไฟล์ประเภท .pdf, .docx (ขนาดไม่เกิน 25MB)</p>
-    <button class="btn btn-primary btn-sm" type="button" onclick="document.getElementById('iepFileInput').click()">
-    <i class="fa-solid fa-file-import me-1"></i> เลือกไฟล์อัปโหลดใหม่
-</button>
-<input type="file" id="iepFileInput" accept=".pdf,.docx" style="display: none;" onchange="uploadAndAnalyzeIEP(this)">
-</a>
+                <div class="p-3 text-center border rounded bg-light d-block text-decoration-none" style="border-style: dashed !important;">
+                <i class="fa-solid fa-cloud-arrow-up fs-2 text-muted mb-2"></i>
+                <h6 class="m-0 fw-bold text-dark">อัปโหลดไฟล์แผน IEP ของโรงเรียนเพื่อเริ่มการวิเคราะห์ด้วย AI</h6>
+                <p class="text-muted small mb-2">รองรับไฟล์ประเภท .pdf, .docx (ขนาดไม่เกิน 25MB)</p>
+                <button class="btn btn-primary btn-sm" type="button" onclick="document.getElementById('iepFileInput').click()">
+                    <i class="fa-solid fa-file-import me-1"></i> เลือกไฟล์อัปโหลดใหม่
+                </button>
+                <input type="file" id="iepFileInput" accept=".pdf,.docx" style="display: none;" onchange="uploadAndAnalyzeIEP(this)">
+            </div>
     </div>
 </div>
 
