@@ -88,6 +88,37 @@ def login():
             flash('ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง', 'danger')
             
     return render_template('login.html')
+# ... บรรทัดสุดท้ายของฟังก์ชัน login() เดิมของ ศน. ...
+        return render_template('login.html')
+
+# 🎯 วางโค้ด /register ต่อท้ายตรงนี้ได้เลยครับ ศน. (ชิดซ้ายสุด)
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+        
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        name = request.form.get('name')
+        
+        # เช็คชื่อผู้ใช้ซ้ำ
+        user_exists = User.query.filter_by(username=username).first()
+        if user_exists:
+            return "<script>alert('ชื่อผู้ใช้งานนี้ถูกใช้ไปแล้ว!'); window.history.back();</script>"
+            
+        # บันทึกเข้าฐานข้อมูล
+        from werkzeug.security import generate_password_hash
+        new_user = User(
+            username=username,
+            password=generate_password_hash(password), # 💡 เช็คชื่อตัวแปร password ในโมเดลของ ศน. อีกทีนะครับ
+            name=name
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return "<script>alert('ลงทะเบียนสำเร็จแล้ว! คุณครูสามารถล็อกอินเข้าสู่ระบบได้ทันที'); window.location.href='/login';</script>"
+        
+    return render_template('register.html')
 
 @app.route('/logout')
 @login_required
