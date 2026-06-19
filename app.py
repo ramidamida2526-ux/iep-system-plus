@@ -91,6 +91,9 @@ def login():
 
 
 # 🎯 วางโค้ด /register ต่อท้ายตรงนี้ได้เลยครับ ศน. (ชิดซ้ายสุด)
+from flask_login import current_user
+from werkzeug.security import generate_password_hash
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -101,13 +104,13 @@ def register():
         password = request.form.get('password')
         name = request.form.get('name')
         
-        # 1. เช็กชื่อผู้ใช้ซ้ำในฐานข้อมูล
+        # 1. เช็กชื่อผู้ใช้ซ้ำ
         user_exists = User.query.filter_by(username=username).first()
         if user_exists:
             flash('ชื่อผู้ใช้งานนี้ถูกใช้ไปแล้ว!', 'danger')
             return render_template('register.html')
             
-        # 2. เข้ารหัสผ่านและสร้างบัญชีผู้ใช้ใหม่
+        # 2. เข้ารหัสผ่านและสร้างบัญชีใหม่
         hashed_password = generate_password_hash(password)
         new_user = User(
             username=username,
@@ -115,7 +118,7 @@ def register():
             fullname=name
         )
         
-        # 3. บันทึกลงฐานข้อมูลอย่างปลอดภัย
+        # 3. บันทึกลงฐานข้อมูล
         try:
             db.session.add(new_user)
             db.session.commit()
@@ -126,7 +129,6 @@ def register():
             flash(f'เกิดข้อผิดพลาดในการบันทึกข้อมูล: {str(e)}', 'danger')
             return render_template('register.html')
             
-    # ถ้าพิมพ์ลิงก์เข้ามาดูหน้าเว็บปกติ ให้เปิดหน้าสมัครสมาชิก
     return render_template('register.html')
 @app.route('/submit-iep', methods=['GET', 'POST'])
 def submit_iep():
