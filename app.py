@@ -459,6 +459,11 @@ def get_iep_tracking():
         return jsonify({"error": str(e)}), 500   
 @app.route('/submit-iep', methods=['POST'])
 def upload_iep():
+    if not session.get('logged_in'):
+        return jsonify({
+            "success": False,
+            "message": "เซสชันหมดอายุหรือไม่ได้เข้าสู่ระบบ กรุณาเข้าสู่ระบบใหม่อีกครั้ง"
+        }), 401
     try:
         if 'file' not in request.files:
             return jsonify({"success": False, "message": "ไม่พบไฟล์ที่อัปโหลด"}), 400
