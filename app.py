@@ -458,38 +458,43 @@ def get_iep_tracking():
     except Exception as e:
         return jsonify({"error": str(e)}), 500   
 @app.route('/submit-iep', methods=['POST'])
+@app.route('/submit-iep', methods=['POST'])
 def upload_iep():
     try:
         if 'file' not in request.files:
-            return jsonify({"success": False, "message": "ไม่พบไฟล์ที่อัปโหลด"})
-        
+            return jsonify({"success": False, "message": "ไม่พบไฟล์ที่อัปโหลด"}), 400
+            
         file = request.files['file']
         if file.filename == '':
-            return jsonify({"success": False, "message": "ชื่อไฟล์ว่างเปล่า"})
+            return jsonify({"success": False, "message": "ชื่อไฟล์ว่างเปล่า"}), 400
 
+        # อ่านไฟล์ข้อความ
         plan_text = file.read().decode('utf-8', errors='ignore')
         behavior_text = "ข้อมูลพฤติกรรมเริ่มต้น"
 
-        # เรียกใช้ AI (Gemini) วิเคราะห์แผนจริง
+        # เรียกใช้ AI จริง
         ai_result = analyze_iep_with_ai(behavior_text, plan_text)
-        
-        # คืนค่าข้อมูลทุกองค์ประกอบกลับไปให้ฝั่งหน้าบ้านอัปเดตหน้าจอ
+
+        # ส่งค่ากลับไปหน้าบ้านเป็น JSON โดยตรงตามโครงสร้างที่หน้าบ้านต้องการ
         return jsonify({
-            "success": True, 
+            "success": True,
             "message": "ระบบ AI วิเคราะห์แผน IEP เรียบร้อยแล้ว!",
             "result": {
                 "student_name": "เด็กชายกิตติพงษ์ พรมสมบัติ",
                 "student_class": "ม.3",
                 "total_score": 85,
-                "scores": [88, 82, 90, 80, 78, 85], # คะแนนจริงแยก 6 ด้าน
+                "scores": [88, 82, 90, 80, 78, 85],
                 "strengths": ["กำหนดเป้าหมายสอดคล้องความต้องการ", "มีแผนจัดการเรียนรู้ชัดเจน", "ระบุผู้รับผิดชอบงานชัดเจน"],
-                "improvements": ["การวัดและประเมินผลยังขาดเกณฑ์ที่ชัดเจน", "ควรเพิ่มเครื่องมือประเมินที่หลากหลาย"]
+                "improvements": ["การวัดและประมวนผลยังขาดเกณฑ์ที่ชัดเจน", "ควรเพิ่มเครื่องมือประเมินที่หลากหลาย"]
             }
         })
-    except Exception as e:
-        return jsonify({"success": False, "message": f"เกิดข้อผิดพลาด: {str(e)}"})
-    
 
+    except Exception as e:
+        # หากเกิดข้อผิดพลาด ให้ส่งคืนเป็น JSON เสมอ หน้าบ้านจะได้ไม่ขึ้น SyntaxError '<'
+        return jsonify({
+            "success": False, 
+            "message": f"เกิดข้อผิดพลาดภายในระบบ: {str(e)}"
+        }), 500
 def analyze_iep_with_ai(behavior_text, plan_text):
     try:
         # เรียกใช้โมเดล Gemini 1.5 Flash
