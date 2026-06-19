@@ -12,7 +12,7 @@ app = Flask(__name__)
 basedir = os.path.abspath(os.path.abspath(os.path.dirname(__file__)))
 
 # 🔐 ตั้งค่าความปลอดภัยและฐานข้อมูล (รวมเป็นชุดเดียวกัน ไม่ซ้ำซ้อน)
-app.config['SECRET_KEY'] = 'iep_plus_super_secret_key_1234'
+app.config['SECRET_KEY'] = 'iep1234'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'iep_production.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
