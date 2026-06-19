@@ -1625,10 +1625,10 @@
         // แสดงสถานะว่ากำลังประมวลผล
         alert("กำลังส่งไฟล์แผน IEP เข้าสู่ระบบ AI เพื่อทำการวิเคราะห์ กรุณารอครู่หนึ่งครับ...");
 
-        fetch('/submit-iep', {
-            method: 'POST',
-            body: formData
-        })
+        fetch('https://iep-system-plus.onrender.com/submit-iep', {
+    method: 'POST',
+    body: formData
+})
         .then(response => response.json())
         .then(data => {
             if (data.success) {
