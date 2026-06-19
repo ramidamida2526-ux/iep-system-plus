@@ -9,13 +9,13 @@ import json
 # ตั้งค่าเชื่อมต่อสมองกล Gemini API
 genai.configure(api_key='ใส่_API_KEY_ของศน_ตรงนี้')
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'iep_plus_super_secret_key_1234'
-basedir = os.path.abspath(os.path.dirname(__file__))
+basedir = os.path.abspath(os.path.abspath(os.path.dirname(__file__)))
 
-# ตั้งค่าฐานข้อมูลและความปลอดภัย
-app.config['SECRET_KEY'] = 'incare_super_secret_key_2024'
+# 🔐 ตั้งค่าความปลอดภัยและฐานข้อมูล (รวมเป็นชุดเดียวกัน ไม่ซ้ำซ้อน)
+app.config['SECRET_KEY'] = 'iep_plus_super_secret_key_1234'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'iep_production.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 
 # เปิดใช้งานระบบ Login
