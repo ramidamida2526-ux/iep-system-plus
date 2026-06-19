@@ -9,6 +9,7 @@ import json
 # ตั้งค่าเชื่อมต่อสมองกล Gemini API
 genai.configure(api_key='ใส่_API_KEY_ของศน_ตรงนี้')
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'iep_plus_super_secret_key_1234'
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # ตั้งค่าฐานข้อมูลและความปลอดภัย
