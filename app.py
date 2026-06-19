@@ -101,24 +101,33 @@ def register():
         password = request.form.get('password')
         name = request.form.get('name')
         
-        # เช็คชื่อผู้ใช้ซ้ำ
+        # 1. เช็กชื่อผู้ใช้ซ้ำในฐานข้อมูล
         user_exists = User.query.filter_by(username=username).first()
         if user_exists:
-            return "<script>alert('ชื่อผู้ใช้งานนี้ถูกใช้ไปแล้ว!'); window.history.back();</script>"
+            flash('ชื่อผู้ใช้งานนี้ถูกใช้ไปแล้ว!', 'danger')
+            return render_template('register.html')
             
-        # บันทึกเข้าฐานข้อมูล
-        from werkzeug.security import generate_password_hash
+        # 2. เข้ารหัสผ่านและสร้างบัญชีผู้ใช้ใหม่
+        hashed_password = generate_password_hash(password)
         new_user = User(
             username=username,
-            password=generate_password_hash(password), # 💡 เช็คชื่อตัวแปร password ในโมเดลของ ศน. อีกทีนะครับ
-            name=name
+            password=hashed_password,
+            fullname=name
         )
-        db.session.add(new_user)
-        db.session.commit()
-        return "<script>alert('ลงทะเบียนสำเร็จแล้ว! คุณครูสามารถล็อกอินเข้าสู่ระบบได้ทันที'); window.location.href='/login';</script>"
         
+        # 3. บันทึกลงฐานข้อมูลอย่างปลอดภัย
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            flash('สมัครสมาชิกสำเร็จแล้ว! กรุณาเข้าสู่ระบบ', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'เกิดข้อผิดพลาดในการบันทึกข้อมูล: {str(e)}', 'danger')
+            return render_template('register.html')
+            
+    # ถ้าพิมพ์ลิงก์เข้ามาดูหน้าเว็บปกติ ให้เปิดหน้าสมัครสมาชิก
     return render_template('register.html')
-
 @app.route('/submit-iep', methods=['GET', 'POST'])
 def submit_iep():
     if not current_user.is_authenticated:
