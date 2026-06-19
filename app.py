@@ -476,25 +476,25 @@ def upload_iep():
         ai_result = analyze_iep_with_ai(behavior_text, plan_text)
 
         # ส่งค่ากลับไปหน้าบ้านเป็น JSON โดยตรงตามโครงสร้างที่หน้าบ้านต้องการ
-        return jsonify({
-            "success": True,
-            "message": "ระบบ AI วิเคราะห์แผน IEP เรียบร้อยแล้ว!",
-            "result": {
-                "student_name": "เด็กชายกิตติพงษ์ พรมสมบัติ",
-                "student_class": "ม.3",
-                "total_score": 85,
-                "scores": [88, 82, 90, 80, 78, 85],
-                "strengths": ["กำหนดเป้าหมายสอดคล้องความต้องการ", "มีแผนจัดการเรียนรู้ชัดเจน", "ระบุผู้รับผิดชอบงานชัดเจน"],
-                "improvements": ["การวัดและประมวนผลยังขาดเกณฑ์ที่ชัดเจน", "ควรเพิ่มเครื่องมือประเมินที่หลากหลาย"]
-            }
-        })
+return jsonify({
+        "success": True,
+        "message": "ระบบ AI วิเคราะห์แผน IEP เรียบร้อยแล้ว!",
+        "result": {
+            "student_name": "เด็กชายกิตติพงษ์ พรมสมบัติ",
+            "student_class": "ม.3",
+            "total_score": 85,
+            "scores": [88, 82, 90, 80, 78, 85],
+            "strengths": ["กำหนดเป้าหมายสอดคล้องความต้องการ", "มีแผนจัดการเรียนรู้ชัดเจน", "ระบุผู้รับผิดชอบงานชัดเจน"],
+            "improvements": ["การวัดและประมวนผลยังขาดเกณฑ์ที่ชัดเจน", "ควรเพิ่มเครื่องมือประเมินที่หลากหลาย"]
+        }
+    })
+except Exception as e:
+    return jsonify({
+        "success": False,
+        "message": f"เกิดข้อผิดพลาดภายในระบบ: {str(e)}"
+    }), 500
 
-    except Exception as e:
-        # หากเกิดข้อผิดพลาด ให้ส่งคืนเป็น JSON เสมอ หน้าบ้านจะได้ไม่ขึ้น SyntaxError '<'
-        return jsonify({
-            "success": False, 
-            "message": f"เกิดข้อผิดพลาดภายในระบบ: {str(e)}"
-        }), 500
+
 def analyze_iep_with_ai(behavior_text, plan_text):
     try:
         # เรียกใช้โมเดล Gemini 1.5 Flash
