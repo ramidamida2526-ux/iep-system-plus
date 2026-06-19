@@ -488,8 +488,7 @@ def upload_iep():
         })
     except Exception as e:
         return jsonify({"success": False, "message": f"เกิดข้อผิดพลาด: {str(e)}"})
-    except Exception as e:
-        return jsonify({"success": False, "message": f"เกิดข้อผิดพลาด: {str(e)}"})
+    
 
 def analyze_iep_with_ai(behavior_text, plan_text):
     try:
