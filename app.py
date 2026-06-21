@@ -16,7 +16,8 @@ app.config['SECRET_KEY'] = 'iep1234'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'iep_system_v2.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
+with app.app_context():
+    db.create_all()
 # เปิดใช้งานระบบ Login
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -619,6 +620,7 @@ def get_supervision_reflection():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 if __name__ == '__main__':
+    app.run(debug=True)    
     try:
         print("--- กำลังตรวจสอบและตั้งค่าระบบฐานข้อมูล ---")
         with app.app_context():
