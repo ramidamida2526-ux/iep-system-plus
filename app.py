@@ -627,6 +627,7 @@ if __name__ == '__main__':
             create_initial_users()
         print("--- ระบบฐานข้อมูลและรายชื่อครูพร้อมใช้งาน 100% ---")
         app.run(debug=True, port=8000)
+        
     except Exception as e:
         print("\n❌ เจอจุดผิดพลาดร้ายแรงตรงนี้ครับ ศน.:")
         import traceback
