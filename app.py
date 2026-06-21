@@ -16,8 +16,7 @@ app.config['SECRET_KEY'] = 'iep1234'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'iep_system_v2.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-with app.app_context():
-    db.create_all()
+
 # เปิดใช้งานระบบ Login
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -117,7 +116,7 @@ def register():
         new_user = User(
             username=username,
             password_hash=hashed_password,
-            fullname=name,
+            name=name,
             role='Teacher',
             cluster=cluster if 'cluster' in locals() else None,
             school=school if 'school' in locals() else None
@@ -623,8 +622,7 @@ def get_supervision_reflection():
 with app.app_context():
     db.drop_all()
     db.create_all()
-    if 'create_initial_users' in globals():
-        create_initial_users()
+    create_initial_users()
 
 if __name__ == '__main__':
     app.run(debug=True)
