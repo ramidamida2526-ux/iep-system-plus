@@ -117,9 +117,10 @@ def register():
         new_user = User(
             username=username,
             password_hash=hashed_password,
-            fullname=name,
-            cluster=cluster,
-            school=school
+            name=name,
+            role='Teacher',
+            cluster=cluster if 'cluster' in locals() else None,
+            school=school if 'school' in locals() else None
         )
         
         db.session.add(new_user)
