@@ -621,6 +621,7 @@ def get_supervision_reflection():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 with app.app_context():
+    db.drop_all()
     db.create_all()
     if 'create_initial_users' in globals():
         create_initial_users()
