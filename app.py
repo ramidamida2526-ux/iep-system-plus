@@ -28,12 +28,12 @@ login_manager.login_message_category = "danger"
 # 1. ตารางผู้ใช้งานระบบ
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    password_hash = db.Column(db.String(200), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
-    role = db.Column(db.String(20), nullable=False)
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    password_hash = db.Column(db.String(150), nullable=False)
+    fullname = db.Column(db.String(150), nullable=False)
     cluster = db.Column(db.String(100), nullable=True)
     school = db.Column(db.String(150), nullable=True)
+    
 
 # 3. ตารางสำหรับเก็บประวัติการอัปโหลดและข้อมูลแผน IEP ของคุณครู
 class IEPSubmission(db.Model):
