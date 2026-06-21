@@ -619,19 +619,11 @@ def get_supervision_reflection():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-if __name__ == '__main__':
-    app.run(debug=True)    
-    try:
-        print("--- กำลังตรวจสอบและตั้งค่าระบบฐานข้อมูล ---")
-        with app.app_context():
-            db.create_all()
-            create_initial_users()
-        print("--- ระบบฐานข้อมูลและรายชื่อครูพร้อมใช้งาน 100% ---")
-        app.run(debug=True, port=8000)
+with app.app_context():
+    db.create_all()
+    if 'create_initial_users' in globals():
+        create_initial_users()
 
-    except Exception as e:
-        print("\n❌ เจอจุดผิดพลาดร้ายแรงตรงนี้ครับ ศน.:")
-        import traceback
-        traceback.print_exc()
-        input("\n[กด Enter เพื่อปิดหน้าต่างนี้]")
+if __name__ == '__main__':
+    app.run(debug=True)
 
