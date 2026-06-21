@@ -97,39 +97,35 @@ from werkzeug.security import generate_password_hash
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-        
     if request.method == 'POST':
+        name = request.form.get('name')
+        cluster = request.form.get('cluster')  # 🏫 รับค่าสหวิทยาเขตที่ครูเลือก
+        school = request.form.get('school')    # 🏫 รับค่าโรงเรียนที่ครูเลือก
         username = request.form.get('username')
         password = request.form.get('password')
-        name = request.form.get('name')
+
+        user = User.query.filter_by(username=username).first()
+        if user:
+            flash('ชื่อผู้ใช้งานนี้มีอยู่ในระบบแล้ว', 'danger')
+            return redirect(url_for('register'))
+
+        hashed_password = generate_password_hash(password, method='scrypt')
         
-        # 1. เช็กชื่อผู้ใช้ซ้ำ
-        user_exists = User.query.filter_by(username=username).first()
-        if user_exists:
-            flash('ชื่อผู้ใช้งานนี้ถูกใช้ไปแล้ว!', 'danger')
-            return render_template('register.html')
-            
-        # 2. เข้ารหัสผ่านและสร้างบัญชีใหม่
-        hashed_password = generate_password_hash(password)
+        # 📝 บันทึกข้อมูลครูใหม่ลงฐานข้อมูล
         new_user = User(
             username=username,
             password=hashed_password,
-            fullname=name
+            fullname=name,
+            cluster=cluster,
+            school=school
         )
         
-        # 3. บันทึกลงฐานข้อมูล
-        try:
-            db.session.add(new_user)
-            db.session.commit()
-            flash('สมัครสมาชิกสำเร็จแล้ว! กรุณาเข้าสู่ระบบ', 'success')
-            return redirect(url_for('login'))
-        except Exception as e:
-            db.session.rollback()
-            flash(f'เกิดข้อผิดพลาดในการบันทึกข้อมูล: {str(e)}', 'danger')
-            return render_template('register.html')
-            
+        db.session.add(new_user)
+        db.session.commit()
+        
+        flash('สมัครสมาชิกสำเร็จ! สามารถเข้าสู่ระบบได้ทันที', 'success')
+        return redirect(url_for('login'))
+
     return render_template('register.html')
 @app.route('/submit-iep', methods=['GET', 'POST'])
 def submit_iep():
