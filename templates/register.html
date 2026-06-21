@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Sarabun', sans-serif; background-color: #f8f9fa; }
-        .register-card { max-width: 450px; margin: 80px auto; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .register-card { max-width: 500px; margin: 50px auto; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
@@ -29,15 +29,36 @@
 
                 <form action="{{ url_for('register') }}" method="POST">
                     <div class="mb-3">
-                        <label class="form-label">ชื่อ-นามสกุลของคุณครู</label>
+                        <label class="form-label fw-medium">ชื่อ-นามสกุลของคุณครู</label>
                         <input type="text" name="name" class="form-control" placeholder="เช่น นางมิดา ประเสริฐ" required>
                     </div>
+
                     <div class="mb-3">
-                        <label class="form-label">ชื่อผู้ใช้งาน (Username)</label>
+                        <label class="form-label fw-medium">สหวิทยาเขต</label>
+                        <select name="cluster" id="clusterSelect" class="form-select" required onchange="updateSchools()">
+                            <option value="">-- เลือกสหวิทยาเขต --</option>
+                            <option value="ปทุมเทวาภิบาล">ปทุมเทวาภิบาล</option>
+                            <option value="ท่าบ่อ">ท่าบ่อ</option>
+                            <option value="ศรีเชียงใหม่">ศรีเชียงใหม่</option>
+                            <option value="โพนพิสัย">โพนพิสัย</option>
+                            <option value="เซิมพิทยาคม">เซิมพิทยาคม</option>
+                            <option value="โซ่พิสัย">โซ่พิสัย</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">โรงเรียน</label>
+                        <select name="school" id="schoolSelect" class="form-select" required>
+                            <option value="">-- กรุณาเลือกสหวิทยาเขตก่อน --</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">ชื่อผู้ใช้งาน (Username)</label>
                         <input type="text" name="username" class="form-control" placeholder="ภาษาอังกฤษหรือตัวเลข" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">รหัสผ่าน (Password)</label>
+                        <label class="form-label fw-medium">รหัสผ่าน (Password)</label>
                         <input type="password" name="password" class="form-control" placeholder="กำหนดรหัสผ่าน" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100 py-2 mt-3 fw-medium">ยืนยันการสมัครสมาชิก</button>
@@ -49,5 +70,36 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const schoolData = {
+            "ปทุมเทวาภิบาล": ["โรงเรียนปทุมเทพวิทยาคาร", "โรงเรียนน้ำสวยวิทยา", "โรงเรียนค่ายบกหวานวิทยา", "โรงเรียนหินโงมพิทยาคม"],
+            "หนองคาย": ["โรงเรียนหนองคายวิทยาคาร", "โรงเรียนฝางพิทยาคม", "โรงเรียนเวียงคำวิทยาคาร", "โรงเรียนพระธาตุบังพวนพิทยาคม","โรงเรียนกวนวันวิทยา"],
+            "ท่าบ่อ": ["โรงเรียนท่าบ่อ", "โรงเรียนท่าบ่อพิทยาคม", "โรงเรียนเดื่อวิทยาคาร", "โรงเรียนหนองนางพิทยาคม","โรงเรียนถ่อนวิทยา", "โรงเรียนโคกคอนวิทยาคม"],
+            "เทสรังสี": ["โรงเรียนสังคมวิทยา", "โรงเรียนพานพร้าว", "โรงเรียนพระพุทธบาทวิทยาคม", "โรงเรียนวังม่วงพิทยาคม", "โรงเรียนโพธิ์ตากพิทยาคม","โรงเรียนวรลาโภนุสรณ์"],
+            "พิสัยสรเดช": ["โรงเรียนชุมพลโพนพิสัย", "โรงเรียนกุดบงพิทยาคาร", "โรงเรียนนาหนังพัฒนาศึกษา","โรงเรียนปากสวยพิทยาคม","โรงเรียนร่มธรรมมานุสรณ์"],
+            "เบญจพิทย์": ["โรงเรียนวังหลวงพิทยาสรรพ์", "โรงเรียนประชาบดีพิทยาคม", "โรงเรียนนาดีพิทยาคม", "โรงเรียนพระบาทนาสิงห์พิทยาคม", "โรงเรียนเซิมพิทยาคม"],
+        };
+
+        function updateSchools() {
+            const clusterSelect = document.getElementById("clusterSelect");
+            const schoolSelect = document.getElementById("schoolSelect");
+            const selectedCluster = clusterSelect.value;
+
+            // ล้างรายชื่อโรงเรียนเดิมออกก่อน
+            schoolSelect.innerHTML = '<option value="">-- เลือกโรงเรียน --</option>';
+
+            if (selectedCluster && schoolData[selectedCluster]) {
+                schoolData[selectedCluster].forEach(function(school) {
+                    const option = document.createElement("option");
+                    option.value = school;
+                    option.text = school;
+                    schoolSelect.appendChild(option);
+                });
+            } else {
+                schoolSelect.innerHTML = '<option value="">-- กรุณาเลือกสหวิทยาเขตก่อน --</option>';
+            }
+        }
+    </script>
 </body>
 </html>
