@@ -13,9 +13,8 @@ basedir = os.path.abspath(os.path.abspath(os.path.dirname(__file__)))
 
 # 🔐 ตั้งค่าความปลอดภัยและฐานข้อมูล (รวมเป็นชุดเดียวกัน ไม่ซ้ำซ้อน)
 app.config['SECRET_KEY'] = 'iep1234'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'iep_production.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'iep_system_v2.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
 
 # เปิดใช้งานระบบ Login
@@ -627,7 +626,7 @@ if __name__ == '__main__':
             create_initial_users()
         print("--- ระบบฐานข้อมูลและรายชื่อครูพร้อมใช้งาน 100% ---")
         app.run(debug=True, port=8000)
-        
+
     except Exception as e:
         print("\n❌ เจอจุดผิดพลาดร้ายแรงตรงนี้ครับ ศน.:")
         import traceback
