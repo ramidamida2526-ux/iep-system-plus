@@ -116,7 +116,7 @@ def register():
         # 📝 บันทึกข้อมูลครูใหม่ลงฐานข้อมูล
         new_user = User(
             username=username,
-            password=hashed_password,
+            password_hash=hashed_password,
             fullname=name,
             cluster=cluster,
             school=school
