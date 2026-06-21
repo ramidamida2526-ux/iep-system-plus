@@ -32,6 +32,8 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(200), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     role = db.Column(db.String(20), nullable=False)
+    cluster = db.Column(db.String(100), nullable=True)
+    school = db.Column(db.String(150), nullable=True)
 
 # 3. ตารางสำหรับเก็บประวัติการอัปโหลดและข้อมูลแผน IEP ของคุณครู
 class IEPSubmission(db.Model):
