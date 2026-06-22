@@ -7,7 +7,7 @@ import google.generativeai as genai
 import json
 
 # ตั้งค่าเชื่อมต่อสมองกล Gemini API
-genai.configure(api_key='ใส่_API_KEY_ของศน_ตรงนี้')
+genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.abspath(os.path.dirname(__file__)))
 
@@ -625,5 +625,9 @@ with app.app_context():
     create_initial_users()
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()  
+        create_initial_users()
+
     app.run(debug=True)
 
