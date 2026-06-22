@@ -116,8 +116,7 @@ def register():
         new_user = User(
             username=username,
             password_hash=hashed_password,
-            name=name,
-            role='Teacher',
+            fullname=name,
             cluster=cluster if 'cluster' in locals() else None,
             school=school if 'school' in locals() else None
         )
@@ -211,8 +210,8 @@ def create_initial_users():
     if User.query.first() is None:
         users = [
             User(username='admin', password_hash=generate_password_hash('1234'), fullname='ศน. รมิดา (แอดมิน)'),
-            User(username='teacher1', password_hash=generate_password_hash('1234'), name='ครูสมศรี (ครูผู้สอน)'),
-            User(username='boss', password_hash=generate_password_hash('1234'), name='ผอ. สมศักดิ์ (ผู้บริหาร)')
+            User(username='teacher1', password_hash=generate_password_hash('1234'), fullname='ครูสมศรี (ครูผู้สอน)'),
+            User(username='boss', password_hash=generate_password_hash('1234'), fullname='ผอ. สมศักดิ์ (ผู้บริหาร)')
         ]
         db.session.bulk_save_objects(users)
         db.session.commit()
